@@ -27,3 +27,12 @@ dependencies:
   skills: []
   tools: []
   references: []
+costs:
+  time: null
+  compute: null
+  human_attention: null
+maintenance:
+  owner: null
+  last_reviewed: null
+  review_triggers: []
+  supersedes: []
