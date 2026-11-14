@@ -1,0 +1,29 @@
+schema_version: "0.1"
+kind: method-card
+id: "method-slug"
+title: ""
+version: "0.1.0"
+status: "proposed"
+domain: ""
+summary: ""
+applicability:
+  suitable_for: []
+  unsuitable_for: []
+  assumptions: []
+inputs: []
+procedure:
+  steps: []
+  decision_points: []
+outputs: []
+evaluation:
+  evaluation_packs: []
+  success_signals: []
+  known_failure_modes: []
+evidence:
+  experiment_records: []
+  strength: "none"
+  limitations: []
+dependencies:
+  skills: []
+  tools: []
+  references: []
