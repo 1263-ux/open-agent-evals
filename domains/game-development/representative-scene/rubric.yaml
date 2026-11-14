@@ -1,0 +1,30 @@
+rubric_version: "0.1-draft"
+scale:
+  0: "No inspectable deliverable"
+  1: "Clearly misses design intent"
+  2: "Partially meets intent; major experience issues"
+  3: "Meets the task-specific target"
+  4: "Strong execution with evidence"
+dimensions:
+  - id: design_intent
+    evidence_required: true
+    anchors: {0: "", 1: "", 2: "", 3: "", 4: ""}
+  - id: visual_coherence
+    evidence_required: true
+    anchors: {0: "", 1: "", 2: "", 3: "", 4: ""}
+  - id: space_and_readability
+    evidence_required: true
+    anchors: {0: "", 1: "", 2: "", 3: "", 4: ""}
+  - id: interaction_and_playability
+    evidence_required: true
+    anchors: {0: "", 1: "", 2: "", 3: "", 4: ""}
+  - id: audio_integration
+    evidence_required: false
+    anchors: {0: "", 1: "", 2: "", 3: "", 4: ""}
+  - id: technical_quality
+    evidence_required: true
+    anchors: {0: "", 1: "", 2: "", 3: "", 4: ""}
+hard_gates: ["design_intent >= 3", "interaction_and_playability >= 3"]
+notes:
+  - "Blank anchors are intentionally uncalibrated; do not score this rubric yet."
+  - "Collect build, player path, screenshots/video and evaluator notes."
