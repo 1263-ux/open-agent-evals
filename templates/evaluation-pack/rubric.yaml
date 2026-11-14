@@ -1,0 +1,17 @@
+rubric_version: '0.1'
+scale:
+  0: 'No inspectable deliverable'
+  1: 'Clearly fails the goal'
+  2: 'Partially meets goal with important gaps'
+  3: 'Meets agreed requirements'
+  4: 'Exceeds agreed requirements with evidence'
+dimensions:
+  - id: goal_fulfillment
+    name: Goal fulfillment
+    weight: null
+    evidence_required: true
+    anchors: {0: '', 1: '', 2: '', 3: '', 4: ''}
+hard_gates: []
+notes:
+  - 'Blank anchors must be calibrated before scoring.'
+  - 'Hard-gate failures cannot be offset by other dimensions.'
