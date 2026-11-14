@@ -1,0 +1,22 @@
+schema_version: '0.1'
+kind: evaluation-pack
+id: domain-task-slug
+title: ''
+domain: ''
+version: '0.1.0'
+status: draft
+language: zh-CN
+summary: ''
+task: {objective: '', deliverables: [], constraints: [], out_of_scope: []}
+inputs: {fixtures: [], references: [], source_revision: null}
+evaluation:
+  rubric: {path: rubric.yaml, version: '0.1'}
+  hard_constraints: []
+  failure_conditions: []
+  evaluator: {modes: [human], independence_required: false}
+execution:
+  instructions: evaluation.md
+  environment: []
+  tools: []
+  budget: {time_limit: null, token_limit: null, monetary_limit: null}
+provenance: {created_at: YYYY-MM-DD, owners: [], sources: [], license_review: pending, change_log: []}
