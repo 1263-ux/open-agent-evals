@@ -44,7 +44,7 @@ flowchart TD
 ## 仓库结构
 
 ```text
-specifications/  稳定的数据结构与协议
+specifications/  稳定的字段约定与 YAML 示例
 templates/       新资产模板
 domains/         各领域 Evaluation Packs
 methods/         experimental / verified / recommended / deprecated 方法
@@ -57,27 +57,34 @@ tooling/         后续按真实需求增加的评测工具
 
 ## 当前状态
 
-本仓库处于 **bootstrap / v0.1.0-draft**：
+本仓库处于 **bootstrap / v0.1.1-draft**：
 
-- 已建立资产分类、状态生命周期和基础 YAML Schema。
-- 已提供软件工程与游戏开发评测包的初始骨架。
-- 尚无经过本仓库协议执行的正式对照实验。
-- 所有示例方法均标记为 `proposed` 或 `experimental`，不把设计假设冒充验证结论。
+- 已建立四类资产的字段约定和 YAML 示例；当前不是正式 JSON Schema，也不承诺可直接用于机器校验。
+- **Software Engineering**：已有一个自包含 Java 17 / Maven 维护任务案例，可按说明先观察基线失败，再执行修复并复验。
+- **Game Development**：已有代表场景评测包设计骨架；Rubric 仍待真实项目校准，暂不能作为已校准的正式评分基准。
+- 尚无经过本仓库协议执行并复核的正式对照实验。
 - 尚未建立模型排行榜，也不发布未经校准的综合分数。
 
 ## 从哪里开始
 
 1. 阅读 [资产治理规则](GOVERNANCE.md)。
 2. 阅读 [评测协议](docs/evaluation-protocol.md)。
-3. 从 [Evaluation Pack 模板](templates/evaluation-pack/) 复制新评测。
-4. 用 [Experiment Record 模板](templates/experiment-record/) 记录执行。
-5. 只有证据充分时，才将方法从 `experimental` 晋升为 `verified`。
-6. 将稳定资产接入 [Adaptive Agent Workflow](https://github.com/open-agent-power) 的能力发现和方法选择流程（具体仓库集成地址待确认）。
+3. 先运行 [Java 17 维护任务案例](domains/software-engineering/maintenance-task/)。
+4. 阅读 [游戏代表场景评测包](domains/game-development/representative-scene/)，注意其 Rubric 尚未校准。
+5. 从 [Evaluation Pack 模板](templates/evaluation-pack/) 复制新评测。
+6. 用 [Experiment Record 模板](templates/experiment-record/) 记录执行。
+7. 只有证据充分时，才将方法从 `experimental` 晋升为 `verified`。
+
+## 与执行框架的关系
+
+本仓库维护评测、方法、实验和能力画像资产；[Adaptive Agent Workflow](https://github.com/1263-ux/Adaptive-Agent-Workflow) 负责发现、选择和组织这些能力。两个仓库独立演进，通过稳定的资产 ID、版本和 Git 引用关联。
 
 ## 语言
 
 当前以中文作为维护语言；Schema 字段、状态值和机器接口使用英文，便于工具消费。后续可为稳定规范补充英文版本。
 
-## License
+## 公开可见性与授权
 
-仓库初始化阶段暂不授予公开复用许可。确认许可证和第三方素材权利后再决定是否开源。
+本仓库当前为 **Public**，意味着仓库内容可被公开查看和克隆。**Public 不等于自动授予任意复制、修改、分发或商业使用许可。**
+
+仓库尚未添加 LICENSE 文件，因此目前没有通过仓库许可证授予统一的开源复用授权。第三方素材仍受其各自许可证和权利约束。贡献者提交内容前应确认拥有相应权利；仓库维护者将在明确项目许可策略后再添加许可证。
