@@ -1,0 +1,35 @@
+schema_version: "0.1"
+kind: evaluation-pack
+id: "game-representative-scene"
+title: "Representative playable game scene"
+domain: "game-development"
+version: "0.1.0"
+status: "draft"
+language: "zh-CN"
+summary: "评估一个能体现目标游戏视觉方向、空间组织和核心交互的代表性可体验场景。此包尚待真实项目校准。"
+task:
+  objective: "交付可运行、可体验且与设计意图一致的代表场景。"
+  deliverables: ["可运行场景或构建", "场景资源与来源清单", "视觉/交互设计说明", "试玩记录"]
+  constraints: ["保留原始设计意图和验收目标", "记录素材、模型和音频来源及许可"]
+  out_of_scope: ["仅凭截图宣称可玩", "以代码测试数量替代体验评价"]
+inputs:
+  fixtures: ["待补充：固定场景任务与项目版本"]
+  references: ["待补充：经许可的视觉参考和设计参考"]
+  source_revision: null
+evaluation:
+  rubric: {path: "rubric.yaml", version: "0.1-draft"}
+  hard_constraints: ["场景可运行并能完成约定玩家路径", "关键交互能够实际触发", "核心设计意图可从体验中辨认"]
+  failure_conditions: ["只有静态截图，没有可体验产物", "关键交互无法完成", "素材来源或许可存在未处理风险"]
+  evaluator: {modes: ["human", "automated"], independence_required: true}
+execution:
+  instructions: "evaluation.md"
+  environment: ["记录引擎版本、运行设备和图形设置"]
+  tools: []
+  budget: {time_limit: null, token_limit: null, monetary_limit: null}
+  reproducibility_notes: ["保存构建版本、场景 Commit、参考版本和试玩路径"]
+provenance:
+  created_at: "2026-11-14"
+  owners: []
+  sources: []
+  license_review: "pending"
+  change_log: ["初始化设计骨架；Rubric 待真实项目试玩校准"]
