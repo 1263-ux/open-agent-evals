@@ -1,0 +1,31 @@
+schema_version: "0.1"
+kind: capability-profile
+id: "profile-model-task"
+subject:
+  model: ""
+  model_version: ""
+  host: ""
+  host_version: null
+  agent_configuration: null
+scope:
+  task_domains: []
+  task_conditions: []
+  excluded_conditions: []
+observations:
+  strengths: []
+  weaknesses: []
+  reliability: "unknown"
+  tool_use: "unknown"
+  long_horizon: "unknown"
+  context_handling: "unknown"
+evidence:
+  experiment_records: []
+  sample_coverage: "unknown"
+  known_biases: []
+comparison:
+  comparable_profiles: []
+  comparability_notes: []
+maintenance:
+  status: "provisional"
+  last_reviewed: null
+  review_triggers: []
