@@ -1,0 +1,24 @@
+rubric_version: "0.1"
+scale:
+  0: "No inspectable deliverable"
+  1: "Target remains broken or severe regression introduced"
+  2: "Partially fixed; important gaps remain"
+  3: "Target behavior correct and relevant checks adequate"
+  4: "Meets 3 with clear delivery, low risk and maintainable change"
+dimensions:
+  - id: behavior_correctness
+    evidence_required: true
+    anchors: {0: "No runnable result", 1: "Target still fails", 2: "Some cases pass", 3: "Agreed cases pass", 4: "Agreed and boundary cases pass"}
+  - id: regression_safety
+    evidence_required: true
+    anchors: {0: "Not checked", 1: "Known severe regression", 2: "Insufficient coverage", 3: "Relevant regressions checked", 4: "Key risks and boundaries checked"}
+  - id: change_quality
+    evidence_required: true
+    anchors: {0: "Unmaintainable", 1: "Major convention violations", 2: "Notable coupling/redundancy", 3: "Scoped and consistent", 4: "Clear and low-maintenance"}
+  - id: delivery_clarity
+    evidence_required: true
+    anchors: {0: "No handoff", 1: "Artifacts unclear", 2: "Incomplete explanation", 3: "Changes and evidence clear", 4: "Easy independent review and continuation"}
+hard_gates: ["behavior_correctness >= 3", "regression_safety >= 3"]
+notes:
+  - "No weighted total score in this draft."
+  - "Time and resource costs are reported separately from code quality."
