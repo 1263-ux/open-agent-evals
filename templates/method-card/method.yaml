@@ -3,7 +3,7 @@ kind: method-card
 id: "method-slug"
 title: ""
 version: "0.1.0"
-status: "proposed"
+status: "proposed" # proposed | experimental | verified | recommended | deprecated
 domain: ""
 summary: ""
 applicability:
