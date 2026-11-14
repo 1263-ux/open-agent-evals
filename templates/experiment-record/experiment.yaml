@@ -1,0 +1,22 @@
+schema_version: "0.1"
+kind: experiment-record
+id: "exp-YYYYMMDD-slug"
+title: ""
+date: "YYYY-MM-DD"
+type: "exploratory"
+status: "planned"
+question: ""
+evaluation: {pack_id: "", pack_version: "", rubric_version: ""}
+conditions:
+  input_revision: null
+  environment: {}
+  model_configs: []
+  workflow_configs: []
+  tools_and_skills: []
+  budget: {}
+  controlled_variables: []
+  confounders: []
+runs: []
+results: {summary: "", comparison: [], deviations: [], conclusion: "inconclusive", confidence: "low"}
+evidence: {raw_data: [], logs: [], artifact_locations: [], evaluator_notes: []}
+reproducibility: {steps: [], known_gaps: [], replay_status: "not-attempted"}
