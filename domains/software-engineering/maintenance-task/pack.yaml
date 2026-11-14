@@ -1,0 +1,67 @@
+schema_version: "0.1"
+kind: evaluation-pack
+id: "software-maintenance-discount-calculation"
+title: "Java 17 maintenance: apply discount to item subtotal, not shipping"
+domain: "software-engineering"
+version: "0.1.0"
+status: "active"
+language: "en"
+summary: "A self-contained Maven fixture for testing whether an Agent can diagnose and fix a bounded business-logic bug without changing unrelated behavior."
+task:
+  objective: "Fix PriceCalculator so a percentage discount applies to the item subtotal only; shipping must remain undiscounted."
+  deliverables:
+    - "Minimal source-code change"
+    - "Passing Maven test suite"
+    - "Short explanation of root cause and verification"
+  constraints:
+    - "Java 17"
+    - "Maven"
+    - "Preserve the public method signature"
+    - "Do not modify the acceptance test to make the task pass"
+    - "Keep the change limited to the calculation defect"
+  out_of_scope:
+    - "Adding new discount types"
+    - "Changing input validation policy"
+    - "Refactoring unrelated code"
+inputs:
+  fixtures:
+    - "fixtures/java-discount-calculator/"
+  references: []
+  source_revision: "fixture-v1"
+evaluation:
+  rubric:
+    path: "rubric.yaml"
+    version: "0.2"
+  hard_constraints:
+    - "The acceptance test for discounted subtotal plus full shipping passes."
+    - "The existing no-discount test passes."
+    - "The public API remains unchanged."
+    - "The acceptance test is not weakened or deleted."
+  failure_conditions:
+    - "Discount is still applied to shipping."
+    - "The test is altered instead of fixing production code."
+    - "Unrelated behavior or public API is changed."
+  evaluator:
+    modes: ["automated", "human"]
+    independence_required: true
+execution:
+  instructions: "evaluation.md"
+  environment:
+    - "JDK 17"
+    - "Apache Maven 3.9 or compatible"
+  tools: ["mvn"]
+  budget:
+    time_limit: null
+    token_limit: null
+    monetary_limit: null
+  reproducibility_notes:
+    - "Copy the fixture to a writable working directory before execution."
+    - "Run the baseline test before assigning the task."
+    - "Record the tested model, host, workflow, Skills and resource usage."
+provenance:
+  created_at: "2026-11-14"
+  owners: ["open-agent-evals maintainers"]
+  sources: ["Self-contained authored fixture; no third-party source code."]
+  license_review: "project-owned fixture; repository license policy pending"
+  change_log:
+    - "0.1.0: initial runnable task fixture and acceptance criteria"
