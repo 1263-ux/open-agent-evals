@@ -1,0 +1,162 @@
+schema_version: "0.1"
+kind: experiment-record
+id: "exp-20261117-oks-recall-backend-reuse"
+title: "召回路径批量化 backend 生命周期：p50 432.7 ms → 32.9 ms 且质量逐项零变化"
+date: "2026-11-17"
+type: "controlled-comparison"
+status: "completed"
+question: "把 fts5 backend 的连接、建表与关闭成本从「每次召回」分摊到「整批召回」之后，召回质量是否保持不变？"
+hypotheses:
+  - "延迟的主要来源是每 case 的 connect + schema DDL + WAL checkpoint，而不是检索算法本身。"
+  - "复用 backend 不改变排序，因此 R@1 / MRR / nDCG@5 应逐项相同。"
+evaluation:
+  pack_id: "software-recall-regression-gate"
+  pack_version: "0.1.0"
+  rubric_version: "0.1"
+conditions:
+  input_revision: >-
+    oks 8761a41（上游 main）；评测集 locomo-eval.yaml sha256:c00ce960f18ab778f7e4202ba90e75dae7ffc1e12f62e072a6216ea06ca757ff；
+    源数据 locomo10.json sha256:553cd5a15e25f2ceccc6ed185221eba645080c93e5b91087560a91aa5961f365
+  environment:
+    os: "Windows 11"
+    python: "3.14"
+    machine: "单机本地 SSD"
+    kb: "由 locomo10.json 转换的 10 段长对话知识库（约 884 KB wiki，1540 case）"
+  model_configs: []
+  workflow_configs:
+    - "单次 CLI 调用执行整批评测（无 Agent 参与，无 LLM 调用）"
+  tools_and_skills:
+    - "python -m knowledge_studio.cli eval recall"
+  budget:
+    baseline_wall_clock_seconds: 480
+    optimized_wall_clock_seconds: 54
+  controlled_variables:
+    - "同一数据集与评测集修订"
+    - "同一 backend=fts5，同一 limit=5"
+    - "同一机器、同一 Python 版本"
+    - "settings_sha256 与 parameters_sha256 两次运行一致"
+  confounders:
+    - "基线与改造运行跨天（11-17 vs 11-18），磁盘缓存与系统负载状态不同。"
+    - "基线每 case 新建 backend；改造后整批共享一个 backend，首次调用仍含建索引成本。"
+    - "两轮 manifest 的 code_version 均显示 0.6.23，因为它读取的是已安装发行版元数据，而非工作树修订；修订以本记录为准。"
+runs:
+  - id: baseline-full
+    group: "全量 1540 case"
+    revision: "8761a41"
+    command: "python -m knowledge_studio.cli eval recall records/locomo-eval.yaml --output records/runs/locomo-fts5-20261117.json --search-backend fts5"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.948701
+      recall_at_3: 0.993506
+      recall_at_5: 0.997403
+      mrr: 0.97013
+      ndcg_at_5: 0.977118
+      latency_p50_ms: 432.745
+      latency_p95_ms: 510.471
+    evidence: "evidence/baseline-locomo-fts5-20261117.json"
+  - id: optimized-full
+    group: "全量 1540 case"
+    revision: "8761a41 + evidence/optimized.patch"
+    command: "python -m knowledge_studio.cli eval recall records/locomo-eval.yaml --output records/runs/locomo-fts5-after-20261118.json --search-backend fts5"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.948701
+      recall_at_3: 0.993506
+      recall_at_5: 0.997403
+      mrr: 0.97013
+      ndcg_at_5: 0.977118
+      latency_p50_ms: 32.9
+      latency_p95_ms: 51.958
+    evidence: "evidence/optimized-locomo-fts5-20261118.json"
+  - id: baseline-sample200
+    group: "分层采样 200 case（每类 50）"
+    revision: "8761a41"
+    command: "python -m knowledge_studio.cli eval recall records/locomo-eval-sample200.yaml --output records/runs/sample200-fts5-20261117.json --search-backend fts5"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.92
+      recall_at_3: 0.98
+      recall_at_5: 0.995
+      mrr: 0.95125
+      ndcg_at_5: 0.962352
+      latency_p50_ms: 415.0
+    evidence: "evidence/baseline-sample200-20261117.json"
+  - id: optimized-sample200
+    group: "分层采样 200 case（每类 50）"
+    revision: "8761a41 + evidence/optimized.patch"
+    command: "python -m knowledge_studio.cli eval recall records/locomo-eval-sample200.yaml --output records/runs/sample200-fts5-after.json --search-backend fts5"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.92
+      recall_at_3: 0.98
+      recall_at_5: 0.995
+      mrr: 0.95125
+      ndcg_at_5: 0.962352
+      latency_p50_ms: 28.272
+      latency_p95_ms: 46.84
+    evidence: "evidence/optimized-sample200-20261118.json"
+results:
+  summary: >-
+    全量 1540 case 上 p50 从 432.745 ms 降到 32.9 ms，p95 从 510.471 ms 降到 51.958 ms；
+    R@1 / R@3 / R@5 / MRR / nDCG@5 五项与基线逐位相同。200 case 采样集给出同向结论（415.0 → 28.272 ms，
+    指标同样逐位相同）。改造集中在四处：schema 只读快路径、挂载根记忆化、resolver 复用、
+    recall 接口接受调用方持有的 backend。
+  comparison:
+    - metric: "latency_p50_ms（全量）"
+      baseline: 432.745
+      optimized: 32.9
+      delta: "-399.845 ms (-92.4%)"
+    - metric: "latency_p95_ms（全量）"
+      baseline: 510.471
+      optimized: 51.958
+      delta: "-458.513 ms (-89.8%)"
+    - metric: "recall_at_1（全量）"
+      baseline: 0.948701
+      optimized: 0.948701
+      delta: "0"
+    - metric: "mrr（全量）"
+      baseline: 0.97013
+      optimized: 0.97013
+      delta: "0"
+    - metric: "ndcg_at_5（全量）"
+      baseline: 0.977118
+      optimized: 0.977118
+      delta: "0"
+    - metric: "stale_leakage（全量）"
+      baseline: 0.0
+      optimized: 0.0
+      delta: "0"
+  deviations:
+    - "单元测试套件退出码 0（200 passed），但测试只覆盖不崩溃与基本行为，不证明排序正确；排序证据来自逐位相同的五项指标。"
+    - "native 与 fusion 两个 backend 未在改造后复测，本记录不对它们下结论。"
+  conclusion: "supported"
+  confidence: "medium"
+evidence:
+  raw_data:
+    - "evidence/baseline-locomo-fts5-20261117.json"
+    - "evidence/optimized-locomo-fts5-20261118.json"
+    - "evidence/baseline-sample200-20261117.json"
+    - "evidence/optimized-sample200-20261118.json"
+  logs:
+    - "evidence/pytest-fts5-vfs-recall-eval.txt"
+  artifact_locations:
+    - "evidence/optimized.patch（完整的 4 文件改动，+84/−9）"
+  evaluator_notes:
+    - "评测由改动者本人执行，未达到本仓库要求的独立评估条件。"
+    - "质量零变化之所以可信，主要靠 dataset/settings/parameters 三个 sha256 两次运行一致 + 五项指标逐位相同；单靠延迟数字不构成结论。"
+    - "证据文件已脱敏：剔除 query 原文（第三方数据集内容不转发），保留 case_id / retrieved / relevant / forbidden / metrics / latency。"
+    - "因此这些文件不是原始运行的完整副本；逐 query 复核需按 fixtures/acquire.md 重建数据集。"
+reproducibility:
+  steps:
+    - "按 domains/software-engineering/recall-regression-gate/fixtures/acquire.md 获取 locomo10.json 并校验 sha256。"
+    - "用固定版本的转换脚本生成知识库与 locomo-eval.yaml，校验评测集 sha256。"
+    - "在 8761a41 上跑一次全量 fts5 评测，保存输出。"
+    - "应用 evidence/optimized.patch，用同一命令再跑一次。"
+    - "对比五项质量指标与 p50/p95；同时确认两次 manifest 的 dataset/settings/parameters sha256 相同。"
+  known_gaps:
+    - "证据文件已剔除 query 原文，无法只凭本记录逐条复核查询与结果的对应关系，需先重建数据集。"
+    - "转换脚本未随包分发，不同实现可能生成不同 slug，导致指标不可直接比较。"
+    - "native / fusion 未复测。"
+    - "长驻进程内 wiki 变动后的索引失效行为未单独实测。"
+    - "Windows 的绝对延迟不能与 macOS 历史基线（31 ms）直接比较，只能比较相对变化。"
+  replay_status: "not-attempted"
