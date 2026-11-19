@@ -1,0 +1,37 @@
+# Gate 4 — function body equivalence (AST)
+
+delegation shims (not verbatim by design): _emit_json
+## mail_cli.py  (functions also present in BASE: 26)
+IDENTICAL _is_safe_agent_id            base_decor=[] new_decor=[]
+IDENTICAL _mail_agent_id               base_decor=[] new_decor=[]
+IDENTICAL _mail_session_id             base_decor=[] new_decor=[]
+IDENTICAL _mail_machine_id             base_decor=[] new_decor=[]
+IDENTICAL _mail_evidence_refs          base_decor=[] new_decor=[]
+IDENTICAL _mail_action_result          base_decor=[] new_decor=[]
+IDENTICAL _emit_mail_action            base_decor=[] new_decor=[]
+IDENTICAL mail_send                    base_decor=["mail_app.command('send')"] new_decor=["app.command('send')"]
+IDENTICAL mail_delegate                base_decor=["mail_app.command('delegate')"] new_decor=["app.command('delegate')"]
+IDENTICAL _mail_unread                 base_decor=[] new_decor=[]
+IDENTICAL mail_inbox                   base_decor=["mail_app.command('inbox')"] new_decor=["app.command('inbox')"]
+IDENTICAL mail_sent                    base_decor=["mail_app.command('sent')"] new_decor=["app.command('sent')"]
+IDENTICAL mail_thread                  base_decor=["mail_app.command('thread')"] new_decor=["app.command('thread')"]
+IDENTICAL mail_reply                   base_decor=["mail_app.command('reply')"] new_decor=["app.command('reply')"]
+IDENTICAL mail_read                    base_decor=["mail_app.command('read')"] new_decor=["app.command('read')"]
+IDENTICAL mail_count                   base_decor=["mail_app.command('count')"] new_decor=["app.command('count')"]
+IDENTICAL mail_ack                     base_decor=["mail_app.command('ack')"] new_decor=["app.command('ack')"]
+IDENTICAL mail_archive                 base_decor=["mail_app.command('archive')"] new_decor=["app.command('archive')"]
+IDENTICAL mail_setup                   base_decor=["mail_app.command('setup')"] new_decor=["app.command('setup')"]
+IDENTICAL mail_serve                   base_decor=["mail_app.command('serve')"] new_decor=["app.command('serve')"]
+IDENTICAL mail_view                    base_decor=["mail_app.command('view')"] new_decor=["app.command('view')"]
+IDENTICAL mail_snapshot                base_decor=["mail_app.command('snapshot')"] new_decor=["app.command('snapshot')"]
+IDENTICAL mail_wait                    base_decor=["mail_app.command('wait')"] new_decor=["app.command('wait')"]
+IDENTICAL registry_list                base_decor=["registry_app.command('list')"] new_decor=["registry_app.command('list')"]
+IDENTICAL registry_bind                base_decor=["registry_app.command('bind')"] new_decor=["registry_app.command('bind')"]
+IDENTICAL registry_remove              base_decor=["registry_app.command('remove')"] new_decor=["registry_app.command('remove')"]
+functions checked: 26, not verbatim: 0
+
+## metrics_html.py  (functions also present in BASE: 1)
+IDENTICAL _generate_metrics_html       base_decor=[] new_decor=[]
+functions checked: 1, not verbatim: 0
+
+total functions checked: 27, not verbatim: 0

@@ -1,0 +1,9 @@
+# Gate 2 — help text parity (byte-for-byte)
+
+instance 组 (B2-2): before_bytes=19730 after_bytes=19730 identical=True
+mail + registry 组 (B2-3): before_bytes=23157 after_bytes=23157 identical=True
+
+instance 组 (B2-2): before_lines=204 after_lines=204
+mail + registry 组 (B2-3): before_lines=249 after_lines=249
+
+diff_lines_total: 0

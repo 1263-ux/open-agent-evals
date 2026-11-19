@@ -1,0 +1,249 @@
+##### --help
+                                                                               
+ Usage: python -m knowledge_studio.cli [OPTIONS] COMMAND [ARGS]...             
+                                                                               
+ Open Knowledge Studio — file-based knowledge engineering CLI.                 
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --version             -V        Show the oks version and exit.              │
+│ --install-completion            Install completion for the current shell.   │
+│ --show-completion               Show completion for the current shell, to   │
+│                                 copy it or customize the installation.      │
+│ --help                          Show this message and exit.                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ raw-commit      Validate an Agent manifest and assemble a Raw Bundle v0.2.  │
+│ recall          Two-path recall: episodic (raw/) + knowledge (wiki/).       │
+│ layout-migrate  Unify legacy goal/discuss/skill buckets with a resumable    │
+│                 local audit.                                                │
+│ use             Record an explicit use of a wiki page — the memory-curve    │
+│                 signal.                                                     │
+│ status          Show knowledge base overview.                               │
+│ decay           Apply decay — drop wiki pages below threshold score.        │
+│ lint            Run health check on the knowledge base.                     │
+│ metrics         Show 4-dimension knowledge metrics, or --html for usage     │
+│                 report.                                                     │
+│ distill         Run maintenance cycle: decay + evolve knowledge.            │
+│ init            Scaffold a new knowledge INSTANCE folder (e.g. your         │
+│                 personal artboy-knowledge-studio).                          │
+│ skills-install  Materialize bundled skills into supported Agent directories │
+│                 (current KB).                                               │
+│ capture         Connect actual daily conversations and readings to Raw and  │
+│                 pending knowledge.                                          │
+│ wiki            Wiki page management.                                       │
+│ skills          Manage Skills under Wiki: import, review, search and load   │
+│                 on demand.                                                  │
+│ drafts          Draft proposal management.                                  │
+│ config          Global configuration (~/.oks/config.json).                  │
+│ hook            Optional editor hooks for recall, conflict detection,       │
+│                 collaboration, and workflow.                                │
+│ mail            Agent-to-agent mail (inbox/sent).                           │
+│ handoff         Freeze and verify task context for an existing Mail         │
+│                 handoff.                                                    │
+│ feedback        Explicit private feedback, candidate review and withdrawal. │
+│                 Scope labels are not authentication.                        │
+│ task            Select a task once, save progress, and resume with checked  │
+│                 sources.                                                    │
+│ registry        Terminal registry (agent+cwd -> profile/goal).              │
+│ eval            Offline recall evaluation and run comparison.               │
+│ sources         Link independent read-only Git knowledge repositories.      │
+│ onboarding      Shared conversation/Studio learning progress.               │
+│ trace           Append-only execution traces and feedback.                  │
+│ workbuddy       WorkBuddy local Agent workflow.                             │
+│ fs              Read-only virtual context filesystem.                       │
+│ capability      Optional modality capabilities; core dependencies stay      │
+│                 lightweight.                                                │
+│ schema          Protocol document shapes an Agent must author.              │
+│ security        Credential redaction for provider raw output.               │
+│ ingest          Agent-native ingestion preparation and execution.           │
+│ team            Shared team knowledge-base bootstrap and onboarding.        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### mail --help
+                                                                               
+ Usage: python -m knowledge_studio.cli mail [OPTIONS] COMMAND [ARGS]...        
+                                                                               
+ Agent-to-agent mail (inbox/sent).                                             
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ send      Write one canonical message and recipient projections.            │
+│ delegate  Submit a task handoff without requiring callers to assemble Mail  │
+│           fields.                                                           │
+│ inbox     List unread messages addressed to the current Agent.              │
+│ sent      List messages authored by the current Agent.                      │
+│ thread    Show all messages in one Thread for the current Agent.            │
+│ reply     Append a message to an existing Thread.                           │
+│ read      Mark a message read for the current Agent only.                   │
+│ count     Count unread mail for the current Agent (for hook use).           │
+│ ack       Acknowledge presentation to one explicit Agent Session.           │
+│ archive   Archive a message or all visible messages in a Thread for this    │
+│           Agent.                                                            │
+│ setup     Install the generic oks-mail Skill bound to this KB and Agent.    │
+│ serve     Serve the real local Mail workspace for a human browser.          │
+│ view      Render a read-only Compact Inbox snapshot; browser actions never  │
+│           write Mail.                                                       │
+│ snapshot  Emit a bounded JSON Thread projection for host integrations such  │
+│           as DSH.                                                           │
+│ wait      Wait for Mail without requiring a host-specific push API.         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### mail send --help
+                                                                               
+ Usage: python -m knowledge_studio.cli mail send [OPTIONS]                     
+                                                                               
+ Write one canonical message and recipient projections.                        
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --body             -b                 <str>  Mail body text [required]   │
+│    --to                                  <str>  Recipient (@all or          │
+│                                                 @agent-id)                  │
+│                                                 [default: @all]             │
+│    --from                                <str>  Sender identity (default:   │
+│                                                 resolve from the            │
+│                                                 environment)                │
+│    --type                                <str>  message | conflict |        │
+│                                                 handoff                     │
+│                                                 [default: message]          │
+│    --title            -t                 <str>  Mail title                  │
+│    --priority                            <str>  normal | urgent             │
+│                                                 [default: normal]           │
+│    --thread                              <str>  Existing Thread ID (for a   │
+│                                                 reply)                      │
+│    --session-id                          <str>  Originating Agent session   │
+│                                                 ID                          │
+│    --delivery-reason                     <str>  direct | conflict |         │
+│                                                 review_request | handoff |  │
+│                                                 system                      │
+│                                                 [default: direct]           │
+│    --record-kind                         <str>  message | goal | handoff |  │
+│                                                 result | blocked | note |   │
+│                                                 knowledge_ref |             │
+│                                                 review_request |            │
+│                                                 acknowledgement             │
+│                                                 [default: message]          │
+│    --notify               --no-notify           Request host notification;  │
+│                                                 safe queued fallback when   │
+│                                                 unsupported                 │
+│                                                 [default: no-notify]        │
+│    --session-policy                      <str>  next_prompt | wait | notify │
+│                                                 [default: next_prompt]      │
+│    --sender-kind                         <str>  Message provenance: human | │
+│                                                 agent | unknown             │
+│    --evidence-ref                        <str>  Evidence ref JSON object;   │
+│                                                 repeatable                  │
+│    --format                              <str>  text | json [default: text] │
+│    --path                                <str>  Instance root (default:     │
+│                                                 active KB)                  │
+│    --help                                       Show this message and exit. │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### mail inbox --help
+                                                                               
+ Usage: python -m knowledge_studio.cli mail inbox [OPTIONS]                    
+                                                                               
+ List unread messages addressed to the current Agent.                          
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### mail serve --help
+                                                                               
+ Usage: python -m knowledge_studio.cli mail serve [OPTIONS]                    
+                                                                               
+ Serve the real local Mail workspace for a human browser.                      
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --path                    <str>                    Knowledge base root      │
+│ --port                    <int range>              [default: 3182]          │
+│                           [1<=x<=65535]                                     │
+│ --mode                    <str>                    reader (read-only) or    │
+│                                                    collaboration (legacy    │
+│                                                    write API)               │
+│                                                    [default: reader]        │
+│ --local-review                                     Allow local candidate    │
+│                                                    review/export and        │
+│                                                    inspected Draft          │
+│                                                    promotion; Mail remains  │
+│                                                    read-only in reader mode │
+│ --local-edit                                       Allow local Goal/task    │
+│                                                    creation, bundled Skill  │
+│                                                    draft import and review; │
+│                                                    Mail remains read-only   │
+│ --discussion-agent        <str>                    Run claude or codex as   │
+│                                                    the local                │
+│                                                    discussion-comment       │
+│                                                    receiver; requires       │
+│                                                    --local-edit             │
+│ --background                                       Run independently of     │
+│                                                    this terminal or host    │
+│                                                    session                  │
+│ --status                                           Probe the managed server │
+│                                                    without writing files    │
+│ --stop                                             Stop only this           │
+│                                                    instance's managed       │
+│                                                    background server        │
+│ --help                                             Show this message and    │
+│                                                    exit.                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### mail setup --help
+                                                                               
+ Usage: python -m knowledge_studio.cli mail setup [OPTIONS]                    
+                                                                               
+ Install the generic oks-mail Skill bound to this KB and Agent.                
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --agent             <str>   Stable identity for this Agent [required]    │
+│ *  --skills-dir        <path>  Host skills directory, e.g. .agents/skills   │
+│                                [required]                                   │
+│    --path              <str>   Knowledge base root                          │
+│    --help                      Show this message and exit.                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### registry --help
+                                                                               
+ Usage: python -m knowledge_studio.cli registry [OPTIONS] COMMAND [ARGS]...    
+                                                                               
+ Terminal registry (agent+cwd -> profile/goal).                                
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ list    List terminal registry entries (agent+cwd -> profile/goal).         │
+│ bind    Bind an agent+cwd to a profile + goals (creates or updates entry).  │
+│ remove  Remove a registry entry.                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### registry bind --help
+                                                                               
+ Usage: python -m knowledge_studio.cli registry bind [OPTIONS]                 
+                                                                               
+ Bind an agent+cwd to a profile + goals (creates or updates entry).            
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --agent-id        <str>  Agent identity [required]                       │
+│ *  --cwd             <str>  Terminal working directory [required]           │
+│    --profile         <str>  Profile slug (profiles/users/)                  │
+│    --goals           <str>  Comma-separated goal slugs                      │
+│    --scope           <str>  Comma-separated wiki areas to narrow recall     │
+│                             (empty = all)                                   │
+│    --help                   Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### registry remove --help
+                                                                               
+ Usage: python -m knowledge_studio.cli registry remove [OPTIONS]               
+                                                                               
+ Remove a registry entry.                                                      
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --agent-id        <str>  Agent identity [required]                       │
+│ *  --cwd             <str>  Terminal working directory [required]           │
+│    --help                   Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
