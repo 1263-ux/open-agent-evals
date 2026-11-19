@@ -1,1 +1,3 @@
+# Gate 5 — static resolution across 15 modules
+
 undefined global names: 0

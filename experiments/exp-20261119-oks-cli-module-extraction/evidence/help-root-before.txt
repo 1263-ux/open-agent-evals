@@ -1,0 +1,60 @@
+                                                                               
+ Usage: python -m knowledge_studio.cli [OPTIONS] COMMAND [ARGS]...             
+                                                                               
+ Open Knowledge Studio — file-based knowledge engineering CLI.                 
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --version             -V        Show the oks version and exit.              │
+│ --install-completion            Install completion for the current shell.   │
+│ --show-completion               Show completion for the current shell, to   │
+│                                 copy it or customize the installation.      │
+│ --help                          Show this message and exit.                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ raw-commit      Validate an Agent manifest and assemble a Raw Bundle v0.2.  │
+│ recall          Two-path recall: episodic (raw/) + knowledge (wiki/).       │
+│ layout-migrate  Unify legacy goal/discuss/skill buckets with a resumable    │
+│                 local audit.                                                │
+│ use             Record an explicit use of a wiki page — the memory-curve    │
+│                 signal.                                                     │
+│ status          Show knowledge base overview.                               │
+│ decay           Apply decay — drop wiki pages below threshold score.        │
+│ lint            Run health check on the knowledge base.                     │
+│ metrics         Show 4-dimension knowledge metrics, or --html for usage     │
+│                 report.                                                     │
+│ distill         Run maintenance cycle: decay + evolve knowledge.            │
+│ init            Scaffold a new knowledge INSTANCE folder (e.g. your         │
+│                 personal artboy-knowledge-studio).                          │
+│ skills-install  Materialize bundled skills into supported Agent directories │
+│                 (current KB).                                               │
+│ capture         Connect actual daily conversations and readings to Raw and  │
+│                 pending knowledge.                                          │
+│ wiki            Wiki page management.                                       │
+│ skills          Manage Skills under Wiki: import, review, search and load   │
+│                 on demand.                                                  │
+│ drafts          Draft proposal management.                                  │
+│ config          Global configuration (~/.oks/config.json).                  │
+│ hook            Optional editor hooks for recall, conflict detection,       │
+│                 collaboration, and workflow.                                │
+│ mail            Agent-to-agent mail (inbox/sent).                           │
+│ handoff         Freeze and verify task context for an existing Mail         │
+│                 handoff.                                                    │
+│ feedback        Explicit private feedback, candidate review and withdrawal. │
+│                 Scope labels are not authentication.                        │
+│ task            Select a task once, save progress, and resume with checked  │
+│                 sources.                                                    │
+│ registry        Terminal registry (agent+cwd -> profile/goal).              │
+│ eval            Offline recall evaluation and run comparison.               │
+│ sources         Link independent read-only Git knowledge repositories.      │
+│ onboarding      Shared conversation/Studio learning progress.               │
+│ trace           Append-only execution traces and feedback.                  │
+│ workbuddy       WorkBuddy local Agent workflow.                             │
+│ fs              Read-only virtual context filesystem.                       │
+│ capability      Optional modality capabilities; core dependencies stay      │
+│                 lightweight.                                                │
+│ schema          Protocol document shapes an Agent must author.              │
+│ security        Credential redaction for provider raw output.               │
+│ ingest          Agent-native ingestion preparation and execution.           │
+│ team            Shared team knowledge-base bootstrap and onboarding.        │
+└─────────────────────────────────────────────────────────────────────────────┘
+

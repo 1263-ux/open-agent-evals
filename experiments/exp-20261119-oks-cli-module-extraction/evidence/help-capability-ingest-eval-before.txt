@@ -1,0 +1,280 @@
+===== capability  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli capability [OPTIONS] COMMAND [ARGS]...  
+                                                                               
+ Optional modality capabilities; core dependencies stay lightweight.           
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ list     List optional capabilities and their explicit install boundary.    │
+│ install  Show or explicitly install one optional capability (heavy          │
+│          dependencies).                                                     │
+│ status   Show the current capability catalog and local provider truth.      │
+│ guide    Print a provider's execution guide.                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== capability list --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli capability list [OPTIONS]               
+                                                                               
+ List optional capabilities and their explicit install boundary.               
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== capability install --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli capability install [OPTIONS] {name}     
+                                                                               
+ Show or explicitly install one optional capability (heavy dependencies).      
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    name      <str>  watch, document, pdf, or formula [required]           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --yes           Execute the displayed installation command                  │
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== capability status --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli capability status [OPTIONS]             
+                                                                               
+ Show the current capability catalog and local provider truth.                 
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --json    --text      Output as JSON [default: json]                        │
+│ --help                Show this message and exit.                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== capability guide --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli capability guide [OPTIONS] {provider}   
+                                                                               
+ Print a provider's execution guide.                                           
+                                                                               
+ The ingest skill points Agents here instead of reading ``providers/`` from    
+ disk: a user's knowledge base has no such directory, the guides ship inside   
+ the package.                                                                  
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    provider      <str>  Provider id, e.g. pdf-lite [required]             │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== ingest  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli ingest [OPTIONS] COMMAND [ARGS]...      
+                                                                               
+ Agent-native ingestion preparation and execution.                             
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ validate  Check persisted extraction, candidate and optional Mail facts     │
+│           without writes.                                                   │
+│ finalize  Check handoffs and atomically save pending/incomplete workflow    │
+│           state.                                                            │
+│ prepare   Create the Agent-native SourceEnvelope and EvidenceManifest       │
+│           skeleton.                                                         │
+│ run       Acquire one source through the built-in connector; no Wiki        │
+│           promotion occurs here.                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== ingest validate --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli ingest validate [OPTIONS] {run_id}      
+                                                                               
+ Check persisted extraction, candidate and optional Mail facts without writes. 
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Agent run identifier [required]                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --collaboration               Require real owner-visible Mail handoffs      │
+│ --review-owner         <str>  [default: human]                              │
+│ --help                        Show this message and exit.                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== ingest finalize --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli ingest finalize [OPTIONS] {run_id}      
+                                                                               
+ Check handoffs and atomically save pending/incomplete workflow state.         
+                                                                               
+ Does not acquire sources, send messages, approve drafts or promote to Wiki.   
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Agent run identifier [required]                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --source-only                Explicit standalone intake without Mail        │
+│                              handoffs                                       │
+│ --review-owner        <str>  [default: human]                               │
+│ --help                       Show this message and exit.                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== ingest prepare --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli ingest prepare [OPTIONS] {source}       
+                                                                               
+ Create the Agent-native SourceEnvelope and EvidenceManifest skeleton.         
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    source      <str>  Local file or URL to prepare for ingestion          │
+│                         [required]                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --kb-root              <str>  Knowledge base root (default: OKS_ROOT or     │
+│                               config)                                       │
+│ --json       --text           Output as JSON [default: json]                │
+│ --help                        Show this message and exit.                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== ingest run --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli ingest run [OPTIONS] {source}           
+                                                                               
+ Acquire one source through the built-in connector; no Wiki promotion occurs   
+ here.                                                                         
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    source      <str>  Local file or supported platform URL [required]     │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --mode                                    <str>    quick or forensic        │
+│                                                    [default: quick]         │
+│ --timeout-seconds                         <float>                           │
+│ --progress               --no-progress             [default: progress]      │
+│ --formula-secondary                                Run PaddleOCR            │
+│                                                    PP-FormulaNet on PDF     │
+│                                                    equation crops.          │
+│ --formula-max-regions                     <int>    Cap equation blocks for  │
+│                                                    formula secondary        │
+│                                                    extraction.              │
+│                                                    [default: 20]            │
+│ --help                                             Show this message and    │
+│                                                    exit.                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval [OPTIONS] COMMAND [ARGS]...        
+                                                                               
+ Offline recall evaluation and run comparison.                                 
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ candidates                                                                  │
+│ capture                                                                     │
+│ review      Explicitly accept/reject knowledge for one observed query;      │
+│             missing labels remain unknown.                                  │
+│ export                                                                      │
+│ recall      Run a read-only Wiki recall evaluation; v2 adds fixture-label   │
+│             audits.                                                         │
+│ compare     Compare runs with matching dataset, knowledge and configuration │
+│             snapshots.                                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval candidates --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval candidates [OPTIONS]               
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval capture --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval capture [OPTIONS]                  
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --enabled         --disabled        [default: enabled]                      │
+│ --retain-query    --hash-query      [default: hash-query]                   │
+│ --help                              Show this message and exit.             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval review --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval review [OPTIONS] {identifier}      
+                                                                               
+ Explicitly accept/reject knowledge for one observed query; missing labels     
+ remain unknown.                                                               
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    identifier      <str>  [required]                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --query                <str>  [required]                                 │
+│    --accept               <str>                                             │
+│    --reject               <str>                                             │
+│    --clear                <str>                                             │
+│    --reason               <str>                                             │
+│    --confirm                                                                │
+│    --derived-query                                                          │
+│    --help                        Show this message and exit.                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval export --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval export [OPTIONS]                   
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --name        <str>  [required]                                          │
+│    --kind        <str>  [default: recall]                                   │
+│    --case        <str>                                                      │
+│    --help               Show this message and exit.                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval recall --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval recall [OPTIONS] {dataset}         
+                                                                               
+ Run a read-only Wiki recall evaluation; v2 adds fixture-label audits.         
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    dataset      <path>  YAML recall dataset [required]                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --output          -o      <path>              Output run JSON [required] │
+│    --limit           -n      <int range> [x>=5]  Retrieved items per case   │
+│                                                  (>=5 keeps recall@5        │
+│                                                  meaningful)                │
+│                                                  [default: 5]               │
+│    --search-backend          <str>               Override recall.yaml       │
+│                                                  (fts5/native/fusion) for   │
+│                                                  ablation                   │
+│    --split                   <str>               v2 dataset split: train,   │
+│                                                  validation or test;        │
+│                                                  required for mixed         │
+│                                                  datasets                   │
+│    --help                                        Show this message and      │
+│                                                  exit.                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== eval compare --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli eval compare [OPTIONS] {baseline}       
+                                                    {candidate}                
+                                                                               
+ Compare runs with matching dataset, knowledge and configuration snapshots.    
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    baseline       <path>  Baseline run JSON [required]                    │
+│ *    candidate      <path>  Candidate run JSON [required]                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --output  -o      <path>  Optional comparison JSON                          │
+│ --vary            <str>   Intentional variable: code, backend, settings or  │
+│                           parameters; repeat as needed                      │
+│ --help                    Show this message and exit.                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+

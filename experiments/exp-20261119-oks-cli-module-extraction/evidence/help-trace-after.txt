@@ -1,0 +1,156 @@
+===== trace  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace [OPTIONS] COMMAND [ARGS]...       
+                                                                               
+ Append-only execution traces and feedback.                                    
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ start     Start an execution trace with a goal event.                       │
+│ append    Append one typed event to a running trace.                        │
+│ judge     Record an external or deterministic judge result.                 │
+│ feedback  Record human feedback without changing formal knowledge.          │
+│ blocker   Record a blocker and the exact condition needed to resume.        │
+│ propose   Write a review-only proposal under drafts/proposals/.             │
+│ finish    Finish a trace with exactly one final_result event.               │
+│ validate  Validate event ordering, types, manifest consistency, and secret  │
+│           safety.                                                           │
+│ show      Print a trace and its manifest as JSON.                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace start --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace start [OPTIONS] {goal_id}         
+                                                                               
+ Start an execution trace with a goal event.                                   
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    goal_id      <str>  Goal identifier [required]                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --run-id        <str>  Stable run identifier                                │
+│ --help                 Show this message and exit.                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace append --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace append [OPTIONS] {run_id}         
+                                                                               
+ Append one typed event to a running trace.                                    
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --type            <str>  Trace event type [required]                     │
+│ *  --actor           <str>  agent | judge | human | tool | system           │
+│                             [required]                                      │
+│    --payload         <str>  JSON object without secrets [default: {}]       │
+│    --evidence        <str>  Repeatable evidence reference                   │
+│    --help                   Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace judge --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace judge [OPTIONS] {run_id}          
+                                                                               
+ Record an external or deterministic judge result.                             
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --outcome        <str>  pass | fail | uncertain [required]               │
+│ *  --comment        <str>  Judge rationale [required]                       │
+│    --help                  Show this message and exit.                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace feedback --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace feedback [OPTIONS] {run_id}       
+                                                                               
+ Record human feedback without changing formal knowledge.                      
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --outcome        <str>  accepted | rejected | needs_changes [required]   │
+│ *  --comment        <str>  Human feedback [required]                        │
+│    --help                  Show this message and exit.                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace blocker --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace blocker [OPTIONS] {run_id}        
+                                                                               
+ Record a blocker and the exact condition needed to resume.                    
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --reason        <str>  Why execution cannot continue [required]          │
+│ *  --needed        <str>  Condition required to resume [required]           │
+│    --help                 Show this message and exit.                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace propose --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace propose [OPTIONS] {run_id}        
+                                                                               
+ Write a review-only proposal under drafts/proposals/.                         
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --kind           <str>  wiki | skill [required]                          │
+│ *  --title          <str>  Proposal title [required]                        │
+│ *  --summary        <str>  Proposed content summary [required]              │
+│    --help                  Show this message and exit.                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace finish --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace finish [OPTIONS] {run_id}         
+                                                                               
+ Finish a trace with exactly one final_result event.                           
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --result        <str>  Final result JSON object [required]               │
+│    --help                 Show this message and exit.                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace validate --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace validate [OPTIONS] {run_id}       
+                                                                               
+ Validate event ordering, types, manifest consistency, and secret safety.      
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --completed          Require a completed run                                │
+│ --help               Show this message and exit.                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== trace show --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli trace show [OPTIONS] {run_id}           
+                                                                               
+ Print a trace and its manifest as JSON.                                       
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    run_id      <str>  Run identifier [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+

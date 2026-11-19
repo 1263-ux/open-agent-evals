@@ -1,7 +1,7 @@
 schema_version: "0.1"
 kind: experiment-record
 id: "exp-20261119-oks-cli-module-extraction"
-title: "把一个 4451 行 CLI 拆成五个模块：五道门全过，且静态扫描抓到一次真实缺陷"
+title: "把一个 4451 行 CLI 拆成 14 个模块：87 个函数逐字等价，静态扫描抓到 5 处运行时看不见的缺陷"
 date: "2026-11-19"
 type: "controlled-comparison"
 status: "completed"
@@ -11,14 +11,16 @@ hypotheses:
   - "失败集合（classname::name）应保持不变；失败条数会因环境漂移，不能作为判据。"
   - "纯搬迁不应改写函数体；AST 逐条比对应 100% 一致。"
   - "仅靠运行时证据会漏掉未执行分支，需要静态全局名扫描补盲。"
+  - "当搬运量超过手工校对可靠区间时，按原文切片（而非重打）能让等价性由构造成立。"
 evaluation:
   pack_id: "software-cli-refactor-gate"
   pack_version: "0.2.0"
   rubric_version: "0.2"
 conditions:
   input_revision: >-
-    oks 8761a41（上游 main）。搬迁前 cli/knowledge_studio/cli.py 4451 行；搬迁后 1911 行，
-    并新增 hooks.py / hooks_cli.py / instance_cli.py / mail_cli.py / metrics_html.py 五个模块，合计 2774 行。
+    oks 8761a41（上游 main）。搬迁前 cli/knowledge_studio/cli.py 4451 行；搬迁后 616 行，
+    并新增 14 个模块、合计 4336 行。模块总行数大于搬迁前，因为每个模块都要自己的
+    docstring / import 块 / 委托壳 —— 这是结构拆分，不是行数压缩。
   environment:
     os: "Windows 11"
     python: "3.14.0（基础解释器；venv launcher 当日全部失效，见 confounders）"
@@ -34,16 +36,18 @@ conditions:
     - "tools/module_globals.py"
   budget:
     baseline_wall_clock_seconds: 1000
-    optimized_wall_clock_seconds: 934
+    optimized_wall_clock_seconds: 1253
   controlled_variables:
     - "基线与改后同机器、同解释器、同 pytest 命令、同 PYTHONPATH 顺序（cli 在 site-packages 之前）"
     - "基线为原地换回原始 cli.py 后重跑，不是事后补跑"
-    - "所有切片共用一份 160 条命令树基线（records/streamline/cli-tree-before.txt）"
+    - "全部六个切片共用一份 160 条命令树基线与一份根帮助基线"
+    - "每片的帮助基线都在改代码之前采集"
   confounders:
-    - "当日所有 venv 的 python.exe 静默 exit 1（含新建 venv），被迫改用基础解释器 + PYTHONPATH，全量套件从 8m45s 变成 15-19m。"
+    - "当日所有 venv 的 python.exe 静默 exit 1（含新建 venv），被迫改用基础解释器 + PYTHONPATH，全量套件从 8m45s 变成 16-21m。"
     - "site-packages 里存在旧的 knowledge_studio 安装副本；PYTHONPATH 顺序错误时，hook 子进程会导入旧代码，失败原因被 ModuleNotFoundError 掩盖。"
     - "test_init / test_schema_assets 会在测试期间临时生成 knowledge_studio/_assets，使 4 条 hook 用例在全量套件里“自己好了”，单跑 test_hooks 则失败；测试顺序会系统性掩盖缺陷。"
-    - "环境漂移使同一份代码的全量失败数在 14 / 16 / 40 / 5 / 3 / 4 之间变化，因此本记录只使用失败集合与定向运行两类证据。"
+    - "环境漂移使同一份代码的全量失败数在 3 / 4 / 5 / 14 / 16 / 40 之间变化，因此本记录只使用失败集合与定向运行两类证据。"
+    - "test_linked_sources 的一条用例走本地 Studio HTTP：服务端已返回 200，客户端 10s 读超时。它在本机频繁触发，与被测 CLI 无关。"
 runs:
   - id: slice-hook
     group: "B2-1 hook 组"
@@ -53,12 +57,11 @@ runs:
     metrics:
       cli_py_lines_before: 4451
       cli_py_lines_after: 3413
-      command_tree_entries_before: 160
-      command_tree_entries_after: 160
+      command_tree_entries: 160
       tree_diff_lines: 0
       undefined_global_names: 1
     evidence: "evidence/command-tree-before.txt"
-    note: "本切片所有运行时门全过，但静态扫描发现 hooks_cli.py 少了 `import shlex`（POSIX 分支才会执行）。缺陷在 B2-1 补记中修复。"
+    note: "本切片所有运行时门全过，但静态扫描发现 hooks_cli.py 少了 `import shlex`（POSIX 分支才会执行）。缺陷在 B3-1 期间修复。"
   - id: slice-instance
     group: "B2-2 instance 组"
     revision: "8761a41 + instance_cli.py"
@@ -67,13 +70,13 @@ runs:
     metrics:
       cli_py_lines_after: 2826
       help_invocations: 8
-      help_diff_lines: 0
+      help_diff_bytes: 0
       tests: 1738
       failures_before: 40
       failures_after: 40
       new_failures: 0
       fixed_failures: 0
-    evidence: "evidence/help-parity.txt"
+    evidence: "evidence/help-instance-before.txt"
   - id: slice-mail
     group: "B2-3 mail + registry 组"
     revision: "8761a41 + mail_cli.py"
@@ -82,12 +85,11 @@ runs:
     metrics:
       cli_py_lines_after: 2069
       help_invocations: 9
-      help_diff_lines: 0
-      body_equivalence_checked: 26
-      body_equivalence_identical: 26
-      undefined_global_names: 0
-    evidence: "evidence/body-equivalence.txt"
-    note: "本切片期间发生过一次 cli.py 侧漏导入 Path 的事故：命令树 diff 为空，但 --help 抛 NameError。说明命令树门单独不足以判定可运行性。"
+      help_diff_bytes: 0
+      body_functions_checked: 26
+      body_functions_identical: 26
+    evidence: "evidence/help-mail-before.txt"
+    note: "本切片期间发生过一次新模块漏导入 Path 的事故：命令树 diff 为空，但 --help 抛 NameError。说明命令树门单独不足以判定可运行性。"
   - id: fix-hook-script
     group: "B3-1 hook 引擎路径修复（独立切片）"
     revision: "8761a41 + hooks.py fallback"
@@ -99,7 +101,7 @@ runs:
       targeted_passed_after: 31
       hook_script_unavailable_after: 0
     evidence: "evidence/junit-diff-combined.txt"
-    note: "这是结构切片暴露出的真实缺陷，按规则独立成片，未混入 B2-1。"
+    note: "结构切片暴露出的真实缺陷，按规则独立成片，未混入 B2-1。"
   - id: slice-copy-primitive
     group: "B3-2 复制原语合并"
     revision: "8761a41 + 单一 _copy_tree"
@@ -120,22 +122,102 @@ runs:
     metrics:
       cli_py_lines_before: 2069
       cli_py_lines_after: 1911
-      body_equivalence_checked: 1
-      body_equivalence_identical: 1
-      undefined_global_names: 0
-      command_tree_entries_after: 160
+      body_functions_checked: 1
+      body_functions_identical: 1
       tests: 1738
       failures_before: 5
       failures_after: 4
       new_failures: 0
-      fixed_failures: 1
-      skipped: 3
     evidence: "evidence/body-equivalence.txt"
-    note: "`metrics --html` 没有自动化测试，只能靠 AST 等价 + 冒烟（2218 bytes HTML，含 doctype 与 slug）。"
+    note: "`metrics --html` 没有自动化测试，只能靠 AST 等价 + 一次冒烟（2218 bytes HTML，含 doctype 与 slug）。"
+  - id: slice-trace
+    group: "B4-2 trace 组"
+    revision: "8761a41 + trace_cli.py"
+    command: "pytest tests/test_trace.py tests/test_cli.py tests/test_evaluation_feedback.py"
+    exit_code: 0
+    metrics:
+      cli_py_lines_after: 1727
+      help_invocations: 10
+      help_diff_bytes: 0
+      body_functions_checked: 11
+      body_functions_identical: 11
+      targeted_tests: 56
+      new_failures: 0
+    evidence: "evidence/help-trace-before.txt"
+  - id: slice-wiki
+    group: "B4-3 wiki 组"
+    revision: "8761a41 + wiki_cli.py"
+    command: "pytest tests/test_cli.py tests/test_health.py tests/test_evaluation_feedback.py tests/test_distiller.py"
+    exit_code: 0
+    metrics:
+      cli_py_lines_after: 1439
+      help_invocations: 11
+      root_help_diff_bytes: 0
+      body_functions_checked: 10
+      body_functions_identical: 10
+      targeted_tests: 61
+      new_failures: 0
+    evidence: "evidence/help-wiki-before.txt"
+    note: >-
+      wiki_use 同时挂根 `use` 与 `wiki use` 两个装饰器。新模块只能挂后者，根别名回到 cli.py 用
+      `app.command("use")(wiki_cli.wiki_use)` 且必须放在原位置 —— 根 --help 按注册顺序渲染，
+      挪到文件末尾会让 `use` 换位，而命令树门照样通过。因此本片把根帮助纳入门。
+  - id: slice-fs
+    group: "B4-4 fs 组"
+    revision: "8761a41 + fs_cli.py"
+    command: "pytest tests/test_vfs.py tests/test_vfs_observation.py tests/test_cli.py"
+    exit_code: 0
+    metrics:
+      cli_py_lines_after: 1248
+      help_invocations: 9
+      help_diff_bytes: 0
+      body_functions_checked: 12
+      body_functions_identical: 12
+      targeted_tests: 98
+      new_failures: 0
+    evidence: "evidence/help-fs-before.txt"
+    note: "`_run_vfs` 是 8 个命令共用的执行通道，签名不变所以命令树/帮助看不出来，只有 AST 等价能守住。"
+  - id: slice-drafts-config-sources
+    group: "B4-5 drafts + config + sources"
+    revision: "8761a41 + drafts_cli.py, config_cli.py, sources_cli.py"
+    command: "pytest tests/test_draft_review.py tests/test_daily_sources.py tests/test_cli.py"
+    exit_code: 0
+    metrics:
+      cli_py_lines_after: 1014
+      help_invocations: 14
+      help_diff_bytes: 0
+      body_functions_checked: 11
+      body_functions_identical: 11
+      assignments_checked: 1
+      targeted_tests: 70
+      new_failures: 0
+    evidence: "evidence/help-drafts-config-sources-before.txt"
+    note: "`_RECALL_YAML_KEYS` 常量表随 config_set 搬走。函数级等价门覆盖不到模块级常量，额外做了一次 AST 比对（IDENTICAL）。"
+  - id: slice-capability-ingest-eval
+    group: "B4-6 capability + ingest + eval"
+    revision: "8761a41 + capability_cli.py, ingest_cli.py, eval_cli.py"
+    command: "pytest tests/test_cli.py tests/test_optional_extensions.py tests/test_capability_commands.py tests/test_ingest_workflow.py tests/test_evaluation.py tests/test_evaluation_v2.py"
+    exit_code: 0
+    metrics:
+      cli_py_lines_after: 616
+      help_invocations: 17
+      help_diff_bytes: 0
+      body_functions_checked: 16
+      body_functions_identical: 16
+      undefined_global_names_first_pass: 5
+      undefined_global_names_after_fix: 0
+      targeted_tests_failed_first_pass: 14
+      targeted_tests: 185
+      new_failures: 0
+    evidence: "evidence/help-capability-ingest-eval-before.txt"
+    note: >-
+      本片改用程序化提取原文（按 marker 切片），~390 行 16 个函数不再手打，等价性由构造成立。
+      静态门抓到 5 个未定义名（t×2、re、_capability_already_installed、_extractor_env_for），
+      它们全部不会让命令树/帮助报错，只在执行到那条分支时炸。
   - id: combined-regression
-    group: "B3-2 + B4-1 组合全量（最终口径）"
-    revision: "8761a41 + 五个模块 + B3-1 + B3-2 + B4-1"
-    command: "pytest tests --junitxml=b4-1-full-20261119.xml（对照 b3-base-20261119.xml）"
+    group: "全部六片组合全量（最终口径）"
+    revision: "8761a41 + 14 个模块 + B3-1 + B3-2"
+    command: "pytest tests --junitxml=b4-6-full-20261119.xml（对照 b3-base-20261119.xml）"
     exit_code: 1
     metrics:
       tests: 1738
@@ -144,54 +226,71 @@ runs:
       new_failures: 0
       fixed_failures: 1
       skipped: 3
-      wall_clock_seconds: 934
+      wall_clock_seconds: 1253
     evidence: "evidence/junit-diff-combined.txt"
 results:
   summary: >-
-    五道门在每一次搬迁上都通过：命令树 160/160 无差异；帮助文本 8 条 + 9 条逐字节相同；
-    失败集合 new=0（最终口径 5 → 4，fixed=1）；mail 26 个函数与 metrics HTML 生成器 AST 全部 IDENTICAL；
-    六个拆分模块未定义全局名 0。cli.py 从 4451 行降到 1911 行（-57%），五个新模块合计 2774 行，
-    因此这是结构拆分而非行数压缩。B3-1 独立修复让 hook 定向测试从 5 failed 变为 31 passed。
+    五道门在每一次搬迁上都通过：命令树 160/160 无差异；79 次帮助调用（8+9+10+11+9+14+17）加根帮助
+    全部逐字节相同；每个切片相对基线的失败集合 new=0；87 个被搬动的函数 AST 全部 IDENTICAL；
+    15 个模块未定义全局名 0。cli.py 从 4451 行降到 616 行（-86.2%），14 个模块合计 4336 行 ——
+    模块总量比原文件更大，这是结构拆分而非行数压缩。B3-1 独立修复让 hook 定向测试从 5 failed 变为 31 passed。
   comparison:
     - metric: "cli.py 行数"
       baseline: 4451
-      optimized: 1911
-      delta: "-2540 (-57.1%)"
+      optimized: 616
+      delta: "-3835 (-86.2%)"
     - metric: "命令树条目"
       baseline: 160
       optimized: 160
       delta: "0"
-    - metric: "帮助文本 diff 行数"
+    - metric: "帮助文本 diff 字节（79 次调用 + 根帮助）"
       baseline: 0
       optimized: 0
       delta: "0"
-    - metric: "失败集合新增（最终口径）"
+    - metric: "失败集合新增（每片对基线）"
       baseline: 0
       optimized: 0
       delta: "0"
-    - metric: "hook 定向测试失败数"
-      baseline: 5
-      optimized: 0
-      delta: "-5"
+    - metric: "AST 等价的被搬函数"
+      baseline: 0
+      optimized: 87
+      delta: "+87"
     - metric: "未定义全局名"
       baseline: 1
       optimized: 0
       delta: "-1"
+    - metric: "hook 定向测试失败数"
+      baseline: 5
+      optimized: 0
+      delta: "-5"
   deviations:
-    - "B2-2 的 40/40 对照是在 venv 解释器下取得；B2-3 的 16/16 对照在“仅 site-packages”的过渡 PYTHONPATH 下取得；两者与最终对照（5/4）不可串比。记录中已按口径分开标注。"
-    - "全量套件只能证明被执行的路径没变；B2-1 漏掉 import shlex 正是被静态扫描（而非测试）发现的。"
-    - "B3-2 是合并复制逻辑，行数 +9 而非下降；把两处 13 行循环换成一个 30 行原语，收益是单一跳过/覆盖规则，不是行数。"
-    - "B4-1 无自动化测试覆盖，等价性只由 AST 与一次冒烟支撑，强度低于有测试的切片。"
+    - "B2-2 的 40/40 对照是在 venv 解释器下取得；B2-3 的 16/16 对照在“仅 site-packages”的过渡 PYTHONPATH 下取得；其余片在最终口径下取得。三者不可串比，记录中按口径分开标注。"
+    - "全量套件只能证明被执行的路径没变；B2-1 的 shlex 与 B4-6 的 5 个未定义名都是静态扫描发现的。"
+    - "B3-2 是合并复制逻辑，行数 +9 而非下降；收益是单一跳过/覆盖规则，不是行数。"
+    - "B4-1 无自动化测试覆盖，等价性只由 AST 与一次冒烟支撑，强度低于其它切片。"
+    - "B4-6 的定向测试首轮 14 failed 全部来自测试 patch 了错误的模块（定义方 vs 调用方），不是产品缺陷；修引用后 185 passed。"
   conclusion: "supported"
   confidence: "medium"
 evidence:
   raw_data:
     - "evidence/command-tree-before.txt"
     - "evidence/command-tree-after.txt"
+    - "evidence/help-root-before.txt"
+    - "evidence/help-root-after.txt"
     - "evidence/help-instance-before.txt"
     - "evidence/help-instance-after.txt"
     - "evidence/help-mail-before.txt"
     - "evidence/help-mail-after.txt"
+    - "evidence/help-trace-before.txt"
+    - "evidence/help-trace-after.txt"
+    - "evidence/help-wiki-before.txt"
+    - "evidence/help-wiki-after.txt"
+    - "evidence/help-fs-before.txt"
+    - "evidence/help-fs-after.txt"
+    - "evidence/help-drafts-config-sources-before.txt"
+    - "evidence/help-drafts-config-sources-after.txt"
+    - "evidence/help-capability-ingest-eval-before.txt"
+    - "evidence/help-capability-ingest-eval-after.txt"
   logs:
     - "evidence/help-parity.txt"
     - "evidence/junit-diff-combined.txt"
@@ -204,23 +303,29 @@ evidence:
     - "oks 仓库 records/streamline/20261119-b3-hook-script-source.md"
     - "oks 仓库 records/streamline/20261119-b3-2-copy-primitive.md"
     - "oks 仓库 records/streamline/20261119-b4-1-metrics-html-module.md"
+    - "oks 仓库 records/streamline/20261119-b4-2-trace-module.md"
+    - "oks 仓库 records/streamline/20261119-b4-3-wiki-module.md"
+    - "oks 仓库 records/streamline/20261119-b4-4-fs-module.md"
+    - "oks 仓库 records/streamline/20261119-b4-5-drafts-config-sources.md"
+    - "oks 仓库 records/streamline/20261119-b4-6-capability-ingest-eval.md"
   evaluator_notes:
     - "评测由改动者本人在同一上下文执行，不满足 GOVERNANCE §6 对独立评估的要求；confidence 因此为 medium。"
     - "本记录不包含 oks 源码快照，复跑需要 oks 仓库 8761a41 与其工作树；证据只保留可机器判定的计数与 diff 结果。"
     - "失败条数一律不作为判据；只使用 classname::name 集合差集与定向运行结果。"
 reproducibility:
   steps:
-    - "取 oks 8761a41 作为 BASE，在不改动的前提下采集命令树、帮助文本与全量 junit。"
+    - "取 oks 8761a41 作为 BASE，在不改动的前提下采集命令树、根帮助、各组帮助与全量 junit。"
     - "用 `git show 8761a41:cli/knowledge_studio/cli.py` 导出预拆分快照，作为 body_equivalence 的 BASE_FILE。"
-    - "应用搬迁（五个新模块 + cli.py 导入/注册），重复采集三份产物。"
-    - "运行 tools/cli_tree.py 与 tools/junit_diff.py，确认 diff 为空、NEW=0。"
-    - "运行 tools/block_equivalence.py（BASE 文件 vs 新模块，函数清单见 body-equivalence.txt）确认 27/27 IDENTICAL，委托壳单列。"
-    - "运行 tools/module_globals.py 扫描全部六个模块，确认未定义名为 0。"
-    - "定向运行 pytest tests/test_hooks.py，确认不再出现 hook_script_unavailable。"
+    - "按切片顺序应用搬迁；每片都重新采集命令树与帮助，并跑 `tools/cli_tree.py` / `cmp`。"
+    - "每片跑 tools/block_equivalence.py（BASE 文件 vs 新模块，函数清单见 body-equivalence.txt），确认 IDENTICAL 且委托壳单列。"
+    - "每片跑 tools/module_globals.py 扫描全部已拆模块，确认未定义名为 0。"
+    - "每片跑 tools/junit_diff.py 对基线 junit，确认 NEW=0（不看失败条数）。"
+    - "定向运行受影响测试文件；任何失败先判断是产品缺陷还是测试 patch 了错误模块。"
   known_gaps:
     - "只在 Windows 上验证；POSIX 分支的运行时行为未被测试覆盖（shlex 缺陷即此类）。"
     - "安装态（wheel 内 _assets/）行为只做了代码级推理，未实际构建 wheel 复验。"
     - "未在独立执行者/独立上下文中复跑，独立复核仍待做。"
-    - "POSIX 分支持续无覆盖；下一次若能在 Linux runner 上跑同一套门，应把结果作为独立 run 追加。"
-    - "`metrics --html` 与 `wiki export` 的渲染输出仍无自动化断言，等价性只能靠 AST。"
+    - "模块级常量/类型别名的搬家只有手工 AST 比对（B4-5 的 _RECALL_YAML_KEYS），工具尚未覆盖；可给 block_equivalence.py 加 --assignments。"
+    - "`metrics --html` 与 `wiki export` 的渲染输出无自动化断言，等价性只能靠 AST。"
+    - "失败集合对比假设基线与本机环境一致；跨机器复跑时 4 条本机失败可能整体换脸。"
   replay_status: "not-attempted"

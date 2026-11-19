@@ -1,0 +1,186 @@
+===== drafts  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli drafts [OPTIONS] COMMAND [ARGS]...      
+                                                                               
+ Draft proposal management.                                                    
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ list     List all draft proposals.                                          │
+│ get      Print the exact Candidate Markdown for human review.               │
+│ promote  Promote a draft to a wiki page.                                    │
+│ reject   Reject a draft proposal and preserve an append-only review         │
+│          receipt.                                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== drafts list --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli drafts list [OPTIONS]                   
+                                                                               
+ List all draft proposals.                                                     
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== drafts get --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli drafts get [OPTIONS] {slug}             
+                                                                               
+ Print the exact Candidate Markdown for human review.                          
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Draft slug to read [required]                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== drafts promote --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli drafts promote [OPTIONS] {slug}         
+                                                                               
+ Promote a draft to a wiki page.                                               
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Draft slug to promote [required]                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --title            <str>  Override the Wiki title during human review       │
+│ --type             <str>  Override Wiki type: concept, strategy, or         │
+│                           anti-pattern                                      │
+│ --area             <str>  Override the Wiki knowledge area                  │
+│ --slug-hint        <str>  Stable slug hint for the promoted Wiki page       │
+│ --tag              <str>  Replace Wiki tags; repeat for multiple tags       │
+│ --help                    Show this message and exit.                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== drafts reject --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli drafts reject [OPTIONS] {slug}          
+                                                                               
+ Reject a draft proposal and preserve an append-only review receipt.           
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Draft slug to reject [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== config  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli config [OPTIONS] COMMAND [ARGS]...      
+                                                                               
+ Global configuration (~/.oks/config.json).                                    
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ init  Initialize global config at ~/.oks/config.json.                       │
+│ show  Show current global configuration.                                    │
+│ set   Set a config value.                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== config init --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli config init [OPTIONS]                   
+                                                                               
+ Initialize global config at ~/.oks/config.json.                               
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --kb-path        <str>  Knowledge base path                                 │
+│ --help                  Show this message and exit.                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== config show --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli config show [OPTIONS]                   
+                                                                               
+ Show current global configuration.                                            
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== config set --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli config set [OPTIONS] {key} {value}      
+                                                                               
+ Set a config value.                                                           
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    key        <str>  Config key (normally knowledge_base_path) [required] │
+│ *    value      <str>  Config value [required]                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== sources  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli sources [OPTIONS] COMMAND [ARGS]...     
+                                                                               
+ Link independent read-only Git knowledge repositories.                        
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ link                                                                        │
+│ inspect  Read a library's committed README requirements before registering  │
+│          it.                                                                │
+│ list                                                                        │
+│ unlink                                                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== sources link --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli sources link [OPTIONS] {path}           
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    path      <path>  [required]                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --name              <str>  [required]                                    │
+│ *  --repository        <str>  [required]                                    │
+│    --revision          <str>  [default: HEAD]                               │
+│    --help                     Show this message and exit.                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== sources inspect --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli sources inspect [OPTIONS] {path}        
+                                                                               
+ Read a library's committed README requirements before registering it.         
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    path      <path>  [required]                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --revision        <str>  [default: HEAD]                                    │
+│ --help                   Show this message and exit.                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== sources list --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli sources list [OPTIONS]                  
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== sources unlink --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli sources unlink [OPTIONS] {name}         
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    name      <str>  [required]                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
