@@ -1,0 +1,67 @@
+# 由 records/runs/zh-v11-*-20261119.json 的 metrics / manifest 字段直接导出，未手工转录
+
+fts5:
+  run_file: zh-v11-fts5-20261119.json
+  run_sha256: 58a02962053090e14ecd452b9295719f63bccf08441881316bd966a04df607e4
+  dataset_version: "1.1.0"
+  dataset_sha256: 00442cbf2e9ca41a13196bc9e288e3355a769b04f377966e3af734e18a9d0749
+  settings_sha256: a0f1be12c16f3431aa38843d44fc94dc1174d0701d0f325bc7ef1028adcf9675
+  parameters_sha256: 04584793ecc5b7242e4de41f64a42cc791f4f022b3a7a1cbe2a55dd1ef45812d
+  code_sha256: 3e28b946439e7dec020a8a4ed2fecd1033c41f2ea7146e4de8437e4396c330cd
+  kb_snapshot_before: cd844d1ffed42eda8497244dab8f121c53d444da83dd2fbebe8bd053db496a69
+  kb_snapshot_after: cd844d1ffed42eda8497244dab8f121c53d444da83dd2fbebe8bd053db496a69
+  kb_unchanged: True
+  recall_at_1: 0.836364
+  recall_at_3: 0.945455
+  recall_at_5: 0.954545
+  mrr: 0.921212
+  ndcg_at_5: 0.922279
+  stale_leakage: 0.0
+  no_result: 0.0
+  latency_p50_ms: 26.263
+  latency_p95_ms: 37.686
+  case_count: 55
+
+native:
+  run_file: zh-v11-native-20261119.json
+  run_sha256: 04ed9e77241e5338fce94d508134aeb3534bdcd1ffe2be3caad7429820dbce23
+  dataset_version: "1.1.0"
+  dataset_sha256: 00442cbf2e9ca41a13196bc9e288e3355a769b04f377966e3af734e18a9d0749
+  settings_sha256: a0f1be12c16f3431aa38843d44fc94dc1174d0701d0f325bc7ef1028adcf9675
+  parameters_sha256: 04584793ecc5b7242e4de41f64a42cc791f4f022b3a7a1cbe2a55dd1ef45812d
+  code_sha256: 3e28b946439e7dec020a8a4ed2fecd1033c41f2ea7146e4de8437e4396c330cd
+  kb_snapshot_before: cd844d1ffed42eda8497244dab8f121c53d444da83dd2fbebe8bd053db496a69
+  kb_snapshot_after: cd844d1ffed42eda8497244dab8f121c53d444da83dd2fbebe8bd053db496a69
+  kb_unchanged: True
+  recall_at_1: 0.8
+  recall_at_3: 0.945455
+  recall_at_5: 0.945455
+  mrr: 0.9
+  ndcg_at_5: 0.902165
+  stale_leakage: 0.0
+  no_result: 0.0
+  latency_p50_ms: 38.958
+  latency_p95_ms: 55.495
+  case_count: 55
+
+fusion:
+  run_file: zh-v11-fusion-20261119.json
+  run_sha256: fc8b32df5da6cb31e66ff51f13f931b91a1af33244290c9993daa305ed94e75e
+  dataset_version: "1.1.0"
+  dataset_sha256: 00442cbf2e9ca41a13196bc9e288e3355a769b04f377966e3af734e18a9d0749
+  settings_sha256: a0f1be12c16f3431aa38843d44fc94dc1174d0701d0f325bc7ef1028adcf9675
+  parameters_sha256: 04584793ecc5b7242e4de41f64a42cc791f4f022b3a7a1cbe2a55dd1ef45812d
+  code_sha256: 3e28b946439e7dec020a8a4ed2fecd1033c41f2ea7146e4de8437e4396c330cd
+  kb_snapshot_before: cd844d1ffed42eda8497244dab8f121c53d444da83dd2fbebe8bd053db496a69
+  kb_snapshot_after: cd844d1ffed42eda8497244dab8f121c53d444da83dd2fbebe8bd053db496a69
+  kb_unchanged: True
+  recall_at_1: 0.836364
+  recall_at_3: 0.945455
+  recall_at_5: 0.945455
+  mrr: 0.921212
+  ndcg_at_5: 0.917966
+  stale_leakage: 0.0
+  no_result: 0.0
+  latency_p50_ms: 56.756
+  latency_p95_ms: 82.87
+  case_count: 55

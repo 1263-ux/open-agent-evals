@@ -3,7 +3,7 @@ kind: evaluation-pack
 id: "software-recall-regression-gate"
 title: "知识库召回引擎：延迟改造后证明质量零退化"
 domain: "software-engineering"
-version: "0.1.0"
+version: "0.2.0"
 status: "draft"
 language: "zh-CN"
 summary: "给定一个可运行的知识库召回引擎、一份固定的标注评测集和一个延迟预算，要求执行者降低单次召回延迟，同时证明 R@1 / MRR / nDCG@5 逐项不退化、无过期内容泄漏。用于回归评估，不用于排名或通用能力判断。"
@@ -24,11 +24,24 @@ task:
     - "新增检索算法或替换 backend"
     - "跨平台绝对性能比较"
 inputs:
-  fixtures: []
+  fixtures:
+    - id: "zh-ops"
+      path: "fixtures/zh-ops/"
+      language: "zh-CN"
+      bundled: true
+      license: "CC BY 4.0（自撰，随包分发）"
+      summary: >-
+        19 篇中文运营/支持类知识库文档（104 KB）+ 55 条中文查询（v1.0.0 与修正后的 v1.1.0）。
+        自带 KB，无需网络与第三方数据即可建库复跑。覆盖字面、改写、口语、多跳、版本时效、
+        旧版陷阱、中英混合与噪声干扰八类。校验值见 fixtures/zh-ops/README.md。
+    - id: "locomo10"
+      language: "en"
+      bundled: false
+      summary: "LoCoMo 长对话（英文），第三方素材，需按 fixtures/acquire.md 自行获取。"
   references:
     - "LoCoMo 数据集（Maharana et al., ACL 2024）：第三方素材，需自行获取，见 fixtures/acquire.md"
     - "召回评测入口：python -m knowledge_studio.cli eval recall <dataset> --search-backend <backend>"
-  source_revision: "locomo10.json sha256:553cd5a15e25f2ce…；评测集 locomo-eval.yaml sha256:c00ce960f18ab778…（完整值见 fixtures/acquire.md）"
+  source_revision: "locomo10.json sha256:553cd5a15e25f2ce…；评测集 locomo-eval.yaml sha256:c00ce960f18ab778…（完整值见 fixtures/acquire.md）；zh-ops v1.1.0 sha256:00442cbf2e9ca41a…（完整值见 fixtures/zh-ops/README.md）"
 evaluation:
   rubric:
     path: "rubric.yaml"
@@ -38,6 +51,7 @@ evaluation:
     - "stale_leakage 保持 0"
     - "两次运行的 case 数、case_id 集合与 limit 完全一致"
     - "评测集与 settings/parameters 的 sha256 在两次运行间未变"
+    - "中英文夹具分别报告，不得用加权平均掩盖任一种语言的退化"
   failure_conditions:
     - "任何一项质量指标下降"
     - "修改数据集或评测集后重跑并宣称达标"
@@ -66,7 +80,10 @@ provenance:
   owners: ["feng"]
   sources:
     - "OKS（open-knowledge-studio）召回路径改造实例：experiments/exp-20261117-oks-recall-backend-reuse"
+    - "OKS 中文召回基线：experiments/exp-20261119-oks-zh-recall"
     - "LoCoMo 数据集为第三方素材，本包不内置、不转发"
-  license_review: "pending：数据集属第三方，未随包分发；已标注获取方式与校验值"
+    - "zh-ops 夹具为本包自撰，随包以 CC BY 4.0 分发"
+  license_review: "LoCoMo 属第三方，未随包分发，已标注获取方式与校验值；zh-ops 为自撰内容，可随包分发"
   change_log:
     - "0.1.0: 初版回归门；阈值与证据来自 OKS 上的实际改造实验"
+    - "0.2.0: 内置 zh-ops 中文夹具（19 文档 / 55 case，含 v1.0.0 与 v1.1.0），补上「英文证据不能推出中文可用」的语言覆盖缺口；新增实验 exp-20261119-oks-zh-recall，给出中文三后端基线与三条未命中的成因"

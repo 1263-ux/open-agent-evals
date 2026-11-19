@@ -57,3 +57,32 @@ python -m knowledge_studio.cli eval recall <dataset.yaml> \
 `quality_parity` 与 `evidence_integrity` 必须同时 ≥ 3。延迟再低，质量掉一项即不通过。
 
 本包适用于"已能工作、要变快"的回归场景，不衡量从零构建召回系统的能力。
+
+## 7. 中文夹具（zh-ops）
+
+英文集通过**不能**推出中文可用：CJK 走 jieba 分词路径，与 `unicode61` 是完全不同的代码分支。
+`fixtures/zh-ops/` 自带知识库，不需要获取任何第三方数据：
+
+```bash
+# 建库
+mkdir -p <kb>/wiki
+cp -r fixtures/zh-ops/wiki/ops <kb>/wiki/
+
+# 跑（cli 必须在 PYTHONPATH 最前，否则已安装副本会盖住源码）
+export OKS_ROOT=<kb>
+export PYTHONPATH=<repo>/cli:<repo>/.venv/Lib/site-packages
+python -m knowledge_studio.cli eval recall \
+  fixtures/zh-ops/datasets/zh-recall-eval-v1.1.yaml \
+  --output out-zh.json --search-backend fts5
+```
+
+参考基线（Windows / Python 3.14 / fts5）：R@1 0.836、R@5 0.955、MRR 0.921、p50 26.3 ms。
+绝对延迟不可跨平台比较，只比相对变化。
+
+两点判读提醒：
+
+- `forbidden` 指向的旧版文档标了 `archived: true`，索引层直接 SQL 过滤，
+  因此 `stale_leakage = 0` 验证的是**归档隔离**，不是"新版排在旧版前面"。
+- 中文失效多数是**词表断裂**（查询用词与文档用词零共享 token，例如「退钱」vs「退款」），
+  三个词法后端会同时失败。看到这种情况不要先去调排序。
+

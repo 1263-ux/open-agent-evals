@@ -1,0 +1,257 @@
+schema_version: recall-case/v1
+dataset_id: oks-zh-ops
+version: 1.1.0
+description: >-
+  中文召回夹具：19 篇自撰运营/支持类 wiki 文档（含 2 篇已废止旧版作为 stale 陷阱、
+  1 篇会议纪要作为噪声干扰），55 条查询覆盖字面、改写、口语、多跳、版本时效与中英混合。
+  标签先于运行写定，未按引擎输出回调。v1.1.0 修正两条指向归档文档的黄金标签
+  （归档文档不进入索引，标签不可达），改动见 records/streamline/20261119-a3-zh-fixture.md。
+cases:
+  # ---------- 字面（lexical） ----------
+  - case_id: zh-001
+    query: "差旅住宿标准是多少"
+    relevant: ["expense-reimbursement"]
+    topic_id: zh-literal
+  - case_id: zh-002
+    query: "P0 故障多久要响应"
+    relevant: ["oncall-escalation"]
+    topic_id: zh-literal
+  - case_id: zh-003
+    query: "CDN 刷新一次最多多少个 URL"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-literal
+  - case_id: zh-004
+    query: "SLA 违约抵扣比例怎么算"
+    relevant: ["sla-credit"]
+    topic_id: zh-literal
+  - case_id: zh-005
+    query: "API 默认 QPS 限制是多少"
+    relevant: ["api-rate-limit"]
+    topic_id: zh-literal
+  - case_id: zh-006
+    query: "导出文件里手机号怎么脱敏"
+    relevant: ["data-export"]
+    topic_id: zh-literal
+  - case_id: zh-007
+    query: "SAML 断言失效通常是什么原因"
+    relevant: ["sso-saml"]
+    topic_id: zh-literal
+  - case_id: zh-008
+    query: "发布列车是周几"
+    relevant: ["release-train"]
+    topic_id: zh-literal
+  - case_id: zh-009
+    query: "特性开关最长能存在多久"
+    relevant: ["feature-flag"]
+    topic_id: zh-literal
+  - case_id: zh-010
+    query: "复盘文档 48 小时内要交吗"
+    relevant: ["incident-postmortem"]
+    topic_id: zh-literal
+
+  # ---------- 改写（paraphrase） ----------
+  - case_id: zh-011
+    query: "客户想退钱有什么条件"
+    relevant: ["refund-policy-current"]
+    forbidden: ["refund-policy-v2-archive"]
+    topic_id: zh-paraphrase
+  - case_id: zh-012
+    query: "出差住宿一晚能报多少钱"
+    relevant: ["expense-reimbursement"]
+    topic_id: zh-paraphrase
+  - case_id: zh-013
+    query: "发票开错了跨月怎么处理"
+    relevant: ["invoice-issuance"]
+    topic_id: zh-paraphrase
+  - case_id: zh-014
+    query: "线上全挂了找谁、多久内升级"
+    relevant: ["oncall-escalation"]
+    topic_id: zh-paraphrase
+  - case_id: zh-015
+    query: "静态资源能不能长期缓存不失效"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-paraphrase
+  - case_id: zh-016
+    query: "改了代码怎么逐步放量"
+    relevant: ["release-train"]
+    topic_id: zh-paraphrase
+  - case_id: zh-017
+    query: "客户问为什么这个月可用性没达标"
+    relevant: ["customer-tier-sla"]
+    topic_id: zh-paraphrase
+  - case_id: zh-018
+    query: "下载的数据里身份证号是明文吗"
+    relevant: ["data-export"]
+    topic_id: zh-paraphrase
+  - case_id: zh-019
+    query: "接企业 IdP 需要客户提供什么"
+    relevant: ["sso-saml"]
+    topic_id: zh-paraphrase
+  - case_id: zh-020
+    query: "新客户上线前必须确认哪几件事"
+    relevant: ["customer-onboarding-checklist"]
+    topic_id: zh-paraphrase
+
+  # ---------- 口语（colloquial） ----------
+  - case_id: zh-021
+    query: "年付用了一半还能退吗"
+    relevant: ["refund-policy-current"]
+    forbidden: ["refund-policy-v2-archive"]
+    topic_id: zh-colloquial
+  - case_id: zh-022
+    query: "报销单最晚几号交"
+    relevant: ["expense-reimbursement"]
+    topic_id: zh-colloquial
+  - case_id: zh-023
+    query: "半夜告警没人管怎么办"
+    relevant: ["oncall-escalation"]
+    topic_id: zh-colloquial
+  - case_id: zh-024
+    query: "发了版用户白屏 chunk 加载失败"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-colloquial
+  - case_id: zh-025
+    query: "客户骂人了要赔钱吗"
+    relevant: ["customer-success-playbook"]
+    topic_id: zh-colloquial
+  - case_id: zh-026
+    query: "限流 429 怎么提额"
+    relevant: ["api-rate-limit"]
+    topic_id: zh-colloquial
+  - case_id: zh-027
+    query: "开关开完忘了关怎么办"
+    relevant: ["feature-flag"]
+    topic_id: zh-colloquial
+  - case_id: zh-028
+    query: "灰度出问题多久能回滚"
+    relevant: ["release-train"]
+    topic_id: zh-colloquial
+
+  # ---------- 多跳（multi-hop） ----------
+  - case_id: zh-029
+    query: "退款已经开票了要走什么流程"
+    relevant: ["refund-policy-current", "invoice-issuance"]
+    topic_id: zh-multihop
+  - case_id: zh-030
+    query: "SLA 没达标又要退款，两个政策会冲突吗"
+    relevant: ["sla-credit", "refund-policy-current"]
+    topic_id: zh-multihop
+  - case_id: zh-031
+    query: "客户上线前 SSO 和初始管理员是硬性要求吗"
+    relevant: ["customer-onboarding-checklist", "sso-saml"]
+    topic_id: zh-multihop
+  - case_id: zh-032
+    query: "P0 之后复盘和改进项怎么跟踪"
+    relevant: ["incident-postmortem", "oncall-escalation"]
+    topic_id: zh-multihop
+  - case_id: zh-033
+    query: "导出明文数据要谁审批、日志留多久"
+    relevant: ["data-export", "security-baseline"]
+    topic_id: zh-multihop
+  - case_id: zh-034
+    query: "发布冻结期能不能走 hotfix"
+    relevant: ["release-train", "oncall-escalation"]
+    topic_id: zh-multihop
+
+  # ---------- 版本与时效（temporal / version） ----------
+  - case_id: zh-035
+    query: "退款窗口是 14 天还是 30 天"
+    relevant: ["refund-policy-current"]
+    forbidden: ["refund-policy-v2-archive"]
+    topic_id: zh-temporal
+  - case_id: zh-036
+    query: "年付退款按什么比例算"
+    relevant: ["refund-policy-current"]
+    topic_id: zh-temporal
+  - case_id: zh-037
+    query: "HTML 缓存现在是什么策略"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-temporal
+  - case_id: zh-038
+    query: "2023 年那次白屏是什么原因"
+    relevant: ["cdn-cache-policy"]
+    topic_id: zh-temporal
+  - case_id: zh-039
+    query: "v2 退款政策什么时候废止的"
+    relevant: ["refund-policy-current"]
+    topic_id: zh-temporal
+
+  # ---------- 旧版陷阱（stale-forbidden） ----------
+  - case_id: zh-040
+    query: "退款到账要几个工作日"
+    relevant: ["refund-policy-current"]
+    forbidden: ["refund-policy-v2-archive"]
+    topic_id: zh-stale
+  - case_id: zh-041
+    query: "图片缓存多久"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-stale
+  - case_id: zh-042
+    query: "HTML 能设 10 分钟缓存吗"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-stale
+  - case_id: zh-043
+    query: "月付订阅退订政策"
+    relevant: ["refund-policy-current"]
+    forbidden: ["refund-policy-v2-archive"]
+    topic_id: zh-stale
+  - case_id: zh-044
+    query: "CDN 刷新接口一次能刷多少条"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-stale
+
+  # ---------- 中英混合（mixed） ----------
+  - case_id: zh-045
+    query: "SAML 的 wantAssertionsSigned 能关吗"
+    relevant: ["sso-saml"]
+    topic_id: zh-mixed
+  - case_id: zh-046
+    query: "SCIM 同步不全怎么排查"
+    relevant: ["sso-saml"]
+    topic_id: zh-mixed
+  - case_id: zh-047
+    query: "Retry-After 头是什么意思"
+    relevant: ["api-rate-limit"]
+    topic_id: zh-mixed
+  - case_id: zh-048
+    query: "P99 延迟涨多少要回滚"
+    relevant: ["release-train"]
+    topic_id: zh-mixed
+  - case_id: zh-049
+    query: "ChunkLoadError 怎么避免"
+    relevant: ["cdn-cache-policy"]
+    forbidden: ["cdn-cache-legacy"]
+    topic_id: zh-mixed
+  - case_id: zh-050
+    query: "T1 客户的可用性承诺是多少"
+    relevant: ["customer-tier-sla"]
+    topic_id: zh-mixed
+
+  # ---------- 噪声干扰（distractor） ----------
+  - case_id: zh-051
+    query: "培训材料什么时候更新"
+    relevant: ["weekly-ops-sync-notes"]
+    topic_id: zh-distractor
+  - case_id: zh-052
+    query: "值班表什么时候试点按天轮转"
+    relevant: ["weekly-ops-sync-notes"]
+    topic_id: zh-distractor
+  - case_id: zh-053
+    query: "审计日志能查多久"
+    relevant: ["security-baseline"]
+    topic_id: zh-distractor
+  - case_id: zh-054
+    query: "密钥多久换一次"
+    relevant: ["security-baseline"]
+    topic_id: zh-distractor
+  - case_id: zh-055
+    query: "客户要求见领导怎么处理"
+    relevant: ["customer-success-playbook"]
+    topic_id: zh-distractor
