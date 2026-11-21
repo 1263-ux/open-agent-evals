@@ -1,0 +1,13 @@
+Before you start, read C:\Users\chenfeng\Adaptive-Agent-Workflow\skills\adaptive-agent-workflow\SKILL.md and follow that workflow for this task. It is the operating method for the work; apply it where it applies, and keep the work proportional to the task.
+
+Work in C:\Users\chenfeng\aaw-exp\arm-b (a Java 17 / Maven project).
+
+Goal: make the test suite pass by fixing the production code.
+
+Rules:
+- Do not modify, weaken, delete or skip any test file.
+- Keep the public method signature unchanged.
+- Run `mvn -q -o test` yourself and confirm the result.
+- When done, report: the exact command you ran, its exit code, the final test counts, the files you changed, and anything you could not verify.
+
+Start now and keep the work minimal.

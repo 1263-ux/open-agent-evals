@@ -1,0 +1,26 @@
+Before you start, read C:\Users\chenfeng\Adaptive-Agent-Workflow\skills\adaptive-agent-workflow\SKILL.md and follow that workflow for this task. It is the operating method for the work; apply it where it applies, and keep the work proportional to the task.
+
+The host already injected the following at session start (do not re-run it). Keep the current-work note at C:\Users\chenfeng\aaw-exp\arm-c\.aaw\current.md updated as the workflow requires:
+
+---
+AAW owner loop: ... (full text in arm-c-hook-context.json)
+Current-work file: C:\Users\chenfeng\aaw-exp\arm-c\.aaw\current.md
+# Current work
+Status: active
+Goal: Fix the Java discount bug so the test suite passes
+Next: Inspect PriceCalculator.calculateTotalCents
+Dead-Ends: none
+[AAW capability router] 6 local domain Skill(s) indexed; none auto-matched this prompt.
+---
+
+Work in C:\Users\chenfeng\aaw-exp\arm-c (a Java 17 / Maven project).
+
+Goal: make the test suite pass by fixing the production code.
+
+Rules:
+- Do not modify, weaken, delete or skip any test file.
+- Keep the public method signature unchanged.
+- Run `mvn -q -o test` yourself and confirm the result.
+- When done, report: the exact command you ran, its exit code, the final test counts, the files you changed, and anything you could not verify.
+
+Start now and keep the work minimal.
