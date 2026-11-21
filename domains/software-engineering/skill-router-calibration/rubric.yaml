@@ -1,0 +1,44 @@
+rubric_version: "0.1"
+scale:
+  0: "Router not run"
+  1: "Run on a subset of prompts or a modified fixture"
+  2: "Run on the full set but without a comparable fixture across versions"
+  3: "Every prompt run against the same fixture, per-prompt table saved"
+  4: "Meets 3 and a second executor replays the table from the recorded command"
+dimensions:
+  - id: top1_hit_rate
+    hard_gate: false
+    evidence_required: true
+    tool: "tools/run_router_eval.py"
+    anchors:
+      0: "No run"
+      1: "Only easy prompts run"
+      2: "Hit rate reported without the per-prompt table"
+      3: "All positive prompts run; misses named"
+      4: "Meets 3 and the same table is reproduced by another executor"
+  - id: negative_false_positive_rate
+    hard_gate: false
+    evidence_required: true
+    tool: "tools/run_router_eval.py"
+    anchors:
+      0: "Negatives not run"
+      1: "Negatives run but folded into the hit rate"
+      2: "Negatives reported as a count only"
+      3: "Every negative prompt and its matches are listed"
+      4: "Meets 3 and the negative set is reviewed for realism by someone other than the author"
+  - id: replayability
+    hard_gate: true
+    evidence_required: true
+    tool: "tools/run_router_eval.py"
+    anchors:
+      0: "No command recorded"
+      1: "Command depends on an unrecorded local state"
+      2: "Command recorded but the fixture revision is unknown"
+      3: "Command, router commit and fixture revision are recorded and the run is deterministic"
+      4: "Meets 3 and a different machine reproduces the summary counts"
+hard_gates:
+  - "replayability >= 3"
+notes:
+  - "No weighted total score: hit rate and false positives answer different questions."
+  - "A single wrong Skill at rank 1 is counted as a miss; rank 2 is reported separately."
+  - "The set is small (21 positive prompts). Treat it as exploratory and state the sample size."

@@ -1,0 +1,7 @@
+# Extra triggers applied by tools/run_router_eval.py --bilingual-triggers.
+# These are not part of the base fixture: the base measures the router with the
+# metadata Skills actually ship. This file measures the documented remedy for
+# cross-language routing, which is a declared trigger, not a smarter tokenizer.
+frontend-design: [排版, 间距, 落地页]
+vision: [截图, 图片, screenshot]
+karpathy-guidelines: [review, pr]

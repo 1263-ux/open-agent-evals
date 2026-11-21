@@ -1,0 +1,39 @@
+label: v0.7.0 (baseline)
+router: C:\Users\chenfeng\tmp-aaw-v070
+skills: 12; prompts per language: 31
+
+zh refactor        HIT1  ['refactor-gate'] [8]
+en refactor        HIT1  ['refactor-gate'] [14]
+zh recall          HIT1  ['recall-eval'] [8]
+en recall          HIT1  ['recall-eval'] [16]
+zh java            HIT1  ['java-maintenance'] [24]
+en java            HIT1  ['java-maintenance'] [28]
+zh migration       HIT1  ['data-migration'] [8]
+en migration       HIT1  ['data-migration'] [10]
+zh docs            HIT1  ['doc-writing'] [16]
+en docs            HIT1  ['doc-writing'] [16]
+zh teardown        HIT1  ['agent-collab-teardown'] [12]
+en teardown        HIT1  ['agent-collab-teardown'] [4]
+zh find-skills     MISS  [] []
+en find-skills     HIT1  ['find-skills'] [6]
+zh dev-system      MISS  ['agent-collab-teardown'] [4]
+zh frontend        MISS  [] []
+en frontend        HIT1  ['frontend-design'] [8]
+zh vision          MISS  [] []
+en vision          MISS  [] []
+zh review          MISS  [] []
+en review          MISS  [] []
+en neg-click       FP    ['refactor-gate'] [6]
+en neg-television  FP    ['vision', 'find-skills'] [10, 4]
+zh neg-weather     ok    [] []
+en neg-weather     ok    [] []
+zh neg-translate   ok    [] []
+en neg-translate   ok    [] []
+zh neg-product     ok    [] []
+en neg-product     ok    [] []
+zh neg-cap         ok    [] []
+en neg-cap         ok    [] []
+
+zh: top1 6/11 | top2 6/11 | negative FP 0/4
+en: top1 8/10 | top2 8/10 | negative FP 2/6
+all: top1 14/21 | top2 14/21 | negative FP 2/10

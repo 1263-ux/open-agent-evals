@@ -1,0 +1,39 @@
+label: v0.7.1 + declared bilingual triggers
+router: C:\Users\chenfeng\Adaptive-Agent-Workflow
+skills: 12; prompts per language: 31
+
+zh refactor        HIT1  ['refactor-gate'] [8]
+en refactor        HIT1  ['refactor-gate'] [16]
+zh recall          HIT1  ['recall-eval'] [8]
+en recall          HIT1  ['recall-eval'] [18]
+zh java            HIT1  ['java-maintenance'] [26]
+en java            HIT1  ['java-maintenance'] [30]
+zh migration       HIT1  ['data-migration'] [8]
+en migration       HIT1  ['data-migration', 'doc-writing'] [12, 4]
+zh docs            HIT1  ['doc-writing'] [16]
+en docs            HIT1  ['doc-writing'] [16]
+zh teardown        HIT1  ['agent-collab-teardown'] [8]
+en teardown        HIT1  ['agent-collab-teardown'] [4]
+zh find-skills     HIT1  ['find-skills'] [4]
+en find-skills     HIT1  ['find-skills'] [4]
+zh dev-system      HIT1  ['dev-system'] [13]
+zh frontend        HIT1  ['frontend-design'] [22]
+en frontend        HIT1  ['frontend-design', 'impeccable'] [8, 4]
+zh vision          HIT1  ['vision'] [7]
+en vision          HIT1  ['vision'] [8]
+zh review          HIT1  ['karpathy-guidelines'] [16]
+en review          HIT1  ['karpathy-guidelines'] [16]
+en neg-click       ok    [] []
+en neg-television  ok    [] []
+zh neg-weather     ok    [] []
+en neg-weather     ok    [] []
+zh neg-translate   ok    [] []
+en neg-translate   ok    [] []
+zh neg-product     ok    [] []
+en neg-product     ok    [] []
+zh neg-cap         ok    [] []
+en neg-cap         ok    [] []
+
+zh: top1 11/11 | top2 11/11 | negative FP 0/4
+en: top1 10/10 | top2 10/10 | negative FP 0/6
+all: top1 21/21 | top2 21/21 | negative FP 0/10

@@ -1,0 +1,84 @@
+schema_version: "0.1"
+kind: evaluation-pack
+id: "software-skill-router-calibration"
+title: "Local Skill router: pick the right Skill, and stay silent otherwise"
+domain: "software-engineering"
+version: "0.1.0"
+status: "active"
+language: "en"
+summary: >-
+  Measures a local, deterministic skill router on a fixed set of indexed Skills and a fixed
+  prompt set with expected matches. Reports top-1 and top-2 hit rate on positive prompts and
+  the false-positive rate on prompts that should route to nothing, separately per language.
+task:
+  objective: >-
+    Given the same Skills fixture and prompt set, measure how often the router's first and
+    second choices contain the expected Skill, and how often it suggests anything at all for a
+    prompt that matches no Skill.
+  deliverables:
+    - "Per-prompt table: language, case id, verdict, matched Skill names and scores"
+    - "Summary counts for top-1, top-2 and negative false positives"
+    - "The router revision under test and the fixture revision"
+  constraints:
+    - "The same Skills and prompts are used for every router version compared."
+    - "Installed Skills are not read: the fixture is copied into a temporary project."
+    - "Negative prompts are reported separately from positive ones."
+    - "A wrong Skill at rank 1 is a miss, not a near-hit."
+  out_of_scope:
+    - "Embedding or semantic retrieval"
+    - "Whether a mounted Skill improves the work"
+    - "Live host delivery of the router notice"
+inputs:
+  fixtures:
+    - id: router-skills
+      path: "fixtures/skills/"
+      bundled: true
+      license: "CC BY 4.0 (authored fixture; dev-system and agent-collab-teardown mirror the maintainer's own Skills)"
+      summary: "12 Skills: 6 domain fixtures and 6 mirrors of Skills installed on the maintainer's machine. One uses a folded block scalar on purpose."
+    - id: router-prompts
+      path: "fixtures/prompts.yaml"
+      bundled: true
+      license: "CC BY 4.0 (self-authored)"
+      summary: "18 cases in Chinese and English: 11 positive with expected Skills, 7 negative that should route to nothing."
+  references:
+    - "Adaptive-Agent-Workflow skills/adaptive-agent-workflow/scripts/capability_index.py"
+    - "fixtures/bilingual-triggers.yaml applies the documented remedy for cross-language routing"
+  source_revision: "fixture v1 (2026-11-21); the router revision is recorded per experiment"
+evaluation:
+  rubric:
+    path: "rubric.yaml"
+    version: "0.1"
+  hard_constraints:
+    - "The fixture and prompt set are identical across the versions compared."
+    - "Every prompt's verdict, matched names and scores are in the saved output."
+    - "Negative false positives are counted, not omitted from the summary."
+  failure_conditions:
+    - "An expected Skill is changed after seeing a run's result."
+    - "A run reads the machine's installed Skills instead of the fixture."
+    - "Only aggregate numbers are reported, without the per-prompt table."
+  evaluator:
+    modes: ["automated"]
+    independence_required: false
+execution:
+  instructions: "evaluation.md"
+  environment:
+    - "Python 3.11+"
+    - "PyYAML"
+    - "A local Adaptive-Agent-Workflow checkout to read capability_index.py from"
+  tools: ["tools/run_router_eval.py"]
+  budget:
+    time_limit: null
+    token_limit: null
+    monetary_limit: null
+  reproducibility_notes:
+    - "Run the same command twice and diff the output; the router is deterministic."
+    - "Record the AAW commit for each run (git rev-parse HEAD in that checkout)."
+    - "Use a git worktree for the old version rather than editing the checkout under test."
+provenance:
+  created_at: "2026-11-21"
+  owners: ["open-agent-evals maintainers"]
+  sources:
+    - "First router probe on the maintainer's installed Skills (2026-11-21), which found the block-scalar parsing failure and the cross-language gap."
+  license_review: "Fixture Skills are authored for this pack; the two mirrored Skills are the maintainer's own content under CC BY 4.0."
+  change_log:
+    - "0.1.0: initial fixture, prompt set and scoring script"
