@@ -1,0 +1,1 @@
+26c35d6ed12b25509461aa8f836791a1edb24d4309fee9a227acd24dc09ec758 *src/test/java/org/openagentevals/PriceCalculatorTest.java

@@ -119,3 +119,15 @@ assets:
   confidence: low
   replay_status: attempted
   path: experiments/exp-20261121-aaw-router-calibration/experiment.yaml
+- kind: experiment-record
+  id: exp-20261121-aaw-workflow-maintenance
+  title: AAW 工作流首轮对照（pilot）：裸执行 / Skill 无 hooks / Skill + hooks 均通过硬门，n=1 无法区分效果
+  date: '2026-11-21'
+  type: controlled-comparison
+  status: completed
+  pack_id: software-maintenance-discount-calculation
+  pack_version: 0.1.0
+  conclusion: inconclusive
+  confidence: low
+  replay_status: attempted
+  path: experiments/exp-20261121-aaw-workflow-maintenance/experiment.yaml

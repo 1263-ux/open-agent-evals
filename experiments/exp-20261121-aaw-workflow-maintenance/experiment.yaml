@@ -1,0 +1,183 @@
+schema_version: "0.1"
+kind: experiment-record
+id: "exp-20261121-aaw-workflow-maintenance"
+title: "AAW 工作流首轮对照（pilot）：裸执行 / Skill 无 hooks / Skill + hooks 均通过硬门，n=1 无法区分效果"
+date: "2026-11-21"
+type: "controlled-comparison"
+status: "completed"
+question: >-
+  在同一个有明确硬门的 Java 维护任务上，纯提示执行（A）、加载 AAW Skill 但不启用 hooks（B）、
+  加载 Skill 并注入真实 hook 输出（C）三种配置，是否在结果、时间、人工纠正和交付证据上有可测差异？
+hypotheses:
+  - "最小有效结构：B/C 加载工作流不会让一个简单任务变差（硬门仍通过，时间不显著增加）。"
+  - "以真实产物为准的回环：C 的当前工作笔记与执行日志会让交付更容易被第三方复核。"
+  - "复杂度成本真实：C 会消耗更多 token/时间，收益必须可观察才有意义。"
+evaluation:
+  pack_id: "software-maintenance-discount-calculation"
+  pack_version: "0.1.0"
+  rubric_version: "0.1"
+conditions:
+  input_revision: >-
+    fixture java-discount-calculator（pack 内自包含，Java 17 / Maven）。三个 arm 各自复制一份，
+    基线测试在复制后先跑一次记录失败。
+  environment:
+    os: "Windows 11"
+    java: "21.0.11"
+    maven: "3.9.12"
+    python: "3.14.0"
+  model_configs:
+    - model: "deepseek-flash[1M]（会话默认模型；三个子任务均未覆盖模型参数）"
+      note: "未通过 API 版本号固定；宿主可能随时间变更默认模型。"
+  workflow_configs:
+    - "A: 只给任务与规则，不加载任何工作流说明"
+    - "B: 先读 AAW SKILL.md 并遵循，不安装 hooks、不预建笔记"
+    - "C: 读 SKILL.md；会话开始注入由真实 handler 生成并已保存的 SessionStart/UserPromptSubmit 输出；结束时对同一项目运行真实 Stop handler"
+  tools_and_skills:
+    - "mvn 3.9.12（三个 arm 相同，-o 离线）"
+    - "Adaptive-Agent-Workflow main fc7db93（v0.7.1）"
+  budget:
+    wall_clock_seconds_total: 74.1
+  controlled_variables:
+    - "同一 fixture、同一 Java/Maven、同一机器、同一会话模型"
+    - "同一任务表述、同一规则、同一验收命令（mvn -q -o test）"
+    - "三个 arm 目录互不共享，均从同一副本开始"
+  confounders:
+    - "n=1：每个 arm 只有一个样本，时间与 token 差异不具备统计意义。"
+    - "C 的 hooks 输出是真实 handler 生成的，但由评测者在会话外注入；宿主没有实际触发事件，属于模拟投递。"
+    - "三个子任务在本会话内启动，共享宿主与工具环境；不是独立机器或独立账号。"
+    - "fixture 不是 git 仓库，C 的执行日志因此记录 diff_files=0、diff_lines=0，低估了实际改动。"
+runs:
+  - id: baseline
+    group: "基线：未修复"
+    revision: "fixture 原样"
+    command: "mvn -o test"
+    exit_code: 1
+    metrics:
+      tests: 2
+      failures: 1
+    evidence: "evidence/baseline-test.txt"
+    note: "discountAppliesToSubtotalButNotShipping: expected 10000 but was 9900。"
+  - id: arm-a-bare
+    group: "A：裸 Agent"
+    revision: "无工作流"
+    command: "mvn -o test（由子任务执行并复验）"
+    exit_code: 0
+    metrics:
+      tests: 2
+      failures: 0
+      owner_corrections: 0
+      duration_ms: 24605
+      subagent_tokens: 34651
+      test_file_unchanged: true
+      stale_comment_fixed: true
+    evidence: "evidence/arm-a-test.txt"
+    note: "改了生产代码并顺手更新了描述 bug 的类注释；无附加工作流产物。"
+  - id: arm-b-skill
+    group: "B：AAW Skill，无 hooks"
+    revision: "SKILL.md v0.7.1"
+    command: "mvn -o test（由子任务执行并复验）"
+    exit_code: 0
+    metrics:
+      tests: 2
+      failures: 0
+      owner_corrections: 0
+      duration_ms: 21613
+      subagent_tokens: 35773
+      test_file_unchanged: true
+      stale_comment_fixed: false
+    evidence: "evidence/arm-b-test.txt"
+    note: "代码修复正确，但类注释仍写着 “This fixture contains an intentional bug”。没有创建 .aaw 笔记（Skill 规定小任务不需要）。"
+  - id: arm-c-skill-hooks
+    group: "C：AAW Skill + hook 输出与 Stop 门"
+    revision: "SKILL.md v0.7.1 + adaptive_checkpoint v0.7.1"
+    command: "mvn -o test（由子任务执行并复验）；随后对项目运行真实 Stop handler"
+    exit_code: 0
+    metrics:
+      tests: 2
+      failures: 0
+      owner_corrections: 0
+      duration_ms: 27889
+      subagent_tokens: 36760
+      test_file_unchanged: true
+      stale_comment_fixed: true
+      stop_gate_blocked: false
+      note_written: true
+      trace_written: true
+    evidence: "evidence/arm-c-test.txt"
+    note: >-
+      唯一一个把结果写进 .aaw/current.md 并产出 aaw-trace@1 的 arm。Stop handler 未拦截
+      （改动 1 个文件、无测试篡改）。执行日志的 diff 字段为 0，因为 fixture 不是 git 仓库。
+results:
+  summary: >-
+    三种配置都一次通过了同一个硬门，且都没有修改测试（三个测试文件 sha256 与原基线相同）。
+    因此本实验没有观察到“工作流提升结果质量”的证据；观察到的是工作流改变了交付形态：C 产出了
+    可复核的工作笔记与执行日志，B 没有任何持久产物，A 只有源码。B 留下了一条过时的类注释，
+    说明“通过测试”不等于“交付干净”。时间与 token 上 C 最高（27.9s / 36.8k），但 n=1，不能据此
+    判断成本结构。结论：结果维度 inconclusive；证据维度支持“C 更容易被第三方复核”。
+  comparison:
+    - metric: "硬门（测试全过 + 测试未改）"
+      baseline: "失败 1/2"
+      optimized: "A、B、C 均为 2/2，测试文件哈希不变"
+      delta: "三种配置无差异"
+    - metric: "交付注释与陈旧文档"
+      baseline: "—"
+      optimized: "A 修、B 未修、C 修"
+      delta: "B 留下过时注释"
+    - metric: "持久证据"
+      baseline: "—"
+      optimized: "A 无、B 无、C 有笔记 + trace"
+      delta: "C 独有"
+    - metric: "耗时 / token"
+      baseline: "—"
+      optimized: "A 24.6s/34.7k；B 21.6s/35.8k；C 27.9s/36.8k"
+      delta: "C 最高，n=1 不构成结论"
+    - metric: "人工纠正次数"
+      baseline: "—"
+      optimized: "A/B/C 均为 0"
+      delta: "无差异"
+  deviations:
+    - "C 的 hooks 是真实 handler 输出但由评测者在会话外投递，不是宿主自动触发。"
+    - "三个 arm 均由同一会话的模型执行，模型身份只记录为会话默认值，未固定 API 版本。"
+    - "fixture 不是 git 仓库，导致 C 的执行日志 diff 字段为 0；该字段在真实项目中才有意义。"
+  conclusion: "inconclusive"
+  confidence: "low"
+evidence:
+  raw_data:
+    - "evidence/baseline-test.txt"
+    - "evidence/arm-a-test.txt"
+    - "evidence/arm-b-test.txt"
+    - "evidence/arm-c-test.txt"
+    - "evidence/arm-a-test-hash.txt"
+    - "evidence/arm-b-test-hash.txt"
+    - "evidence/arm-c-test-hash.txt"
+    - "evidence/arm-a-PriceCalculator.java"
+    - "evidence/arm-b-PriceCalculator.java"
+    - "evidence/arm-c-PriceCalculator.java"
+    - "evidence/arm-c-current.md"
+    - "evidence/arm-c-trace.jsonl"
+    - "evidence/arm-c-hook-context.json"
+  logs:
+    - "evidence/arm-a-prompt.txt"
+    - "evidence/arm-b-prompt.txt"
+    - "evidence/arm-c-prompt.txt"
+  artifact_locations:
+    - "domains/software-engineering/maintenance-task/fixtures/java-discount-calculator"
+    - "C:\\Users\\chenfeng\\aaw-exp\\（本地工作副本，不随仓库分发）"
+  evaluator_notes:
+    - "评测者同时是三个子任务的发起者，不满足 GOVERNANCE §6 的独立性要求。"
+    - "“人工纠正”指评测者检查产物后需要追加一轮指令；本次三个 arm 都不需要，但评测者确实检查了全部产物。"
+    - "B 的过时注释不构成硬门失败，属于交付质量差异；没有把它折算成分数。"
+reproducibility:
+  steps:
+    - "复制 maintenance-task 的 java-discount-calculator 到三个独立目录。"
+    - "在每个目录先运行 mvn -o test，确认基线 1 个失败。"
+    - "按 evidence/arm-a|b|c-prompt.txt 的原文启动三个独立上下文，模型保持同一默认值。"
+    - "C 额外执行：adaptive_checkpoint.py --init，然后以 SessionStart / UserPromptSubmit 事件运行 handler 并保存输出，结束时运行 Stop 事件。"
+    - "对每个目录运行 mvn -o test 并记录退出码；对测试文件取 sha256 与原基线比对。"
+  known_gaps:
+    - "n=1，不能估计差异分布，也不报告统计显著性。"
+    - "模型与宿主版本没有固定到可验证的标识；重跑可能落在不同默认模型上。"
+    - "只在 Windows 上执行。"
+    - "没有测试更复杂的任务（多文件、无硬门、需要探索），因此不能推断工作流在高不确定性任务上的作用。"
+    - "没有测量 time-to-first-usable 的细分阶段，只有子任务总时长。"
+  replay_status: "attempted"
