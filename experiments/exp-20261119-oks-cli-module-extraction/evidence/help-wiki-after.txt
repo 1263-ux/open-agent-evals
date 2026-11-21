@@ -1,0 +1,179 @@
+===== wiki  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki [OPTIONS] COMMAND [ARGS]...        
+                                                                               
+ Wiki page management.                                                         
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ list       List all wiki pages.                                             │
+│ get        Get a wiki page by slug.                                         │
+│ domains    List canonical knowledge domain IDs and display labels.          │
+│ create     Create a new wiki page.                                          │
+│ pin        Pin a wiki page (exempt from decay).                             │
+│ archive    Archive a wiki page.                                             │
+│ unarchive  Bring an archived page back — the return path A3 depends on.     │
+│ use        Record an explicit use of a wiki page — the memory-curve signal. │
+│ export     Export wiki/ to a portable knowledge bundle.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki list --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki list [OPTIONS]                     
+                                                                               
+ List all wiki pages.                                                          
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --domain  -d      <str>                                                     │
+│ --type    -t      <str>                                                     │
+│ --status  -s      <str>                                                     │
+│ --help                   Show this message and exit.                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki get --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki get [OPTIONS] {slug}               
+                                                                               
+ Get a wiki page by slug.                                                      
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Page slug [required]                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki domains --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki domains [OPTIONS]                  
+                                                                               
+ List canonical knowledge domain IDs and display labels.                       
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki create --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki create [OPTIONS]                   
+                                                                               
+ Create a new wiki page.                                                       
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --title             <str>    Page title [required]                       │
+│    --type              <str>    concept/strategy/anti-pattern               │
+│                                 [default: concept]                          │
+│ *  --area              <str>    Canonical domain ID; see oks wiki domains   │
+│                                 [required]                                  │
+│    --importance        <float>  0.0-1.0 [default: 0.5]                      │
+│    --content           <str>    Page body (or pipe via stdin)               │
+│    --help                       Show this message and exit.                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki pin --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki pin [OPTIONS] {slug}               
+                                                                               
+ Pin a wiki page (exempt from decay).                                          
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Page slug to pin [required]                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki archive --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki archive [OPTIONS] {slug}           
+                                                                               
+ Archive a wiki page.                                                          
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Page slug to archive [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki unarchive --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki unarchive [OPTIONS] {slug}         
+                                                                               
+ Bring an archived page back — the return path A3 depends on.                  
+                                                                               
+ Restores to `provisional`, not `active`: leaving the archive is not a human   
+ review.                                                                       
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Page slug to bring back into recall [required]        │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki use --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki use [OPTIONS] {slug}               
+                                                                               
+ Record an explicit use of a wiki page — the memory-curve signal.              
+                                                                               
+ Recall and search are read-only: a query does not count as a use. Call        
+ this when a page is actually injected or applied so that access_count         
+ reflects real usage, not query frequency. This signal affects ranking only;   
+ it does not promote a page or change its confidence/status.                   
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Slug of a page that was actually used/injected        │
+│                       [required]                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --observation        <str>  Exact evaluation observation ID; never inferred │
+│ --help                      Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== wiki export --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli wiki export [OPTIONS]                   
+                                                                               
+ Export wiki/ to a portable knowledge bundle.                                  
+                                                                               
+ Two flavors (both pure markdown; difference is link + frontmatter style):     
+                                                                               
+ - ``okf``      — Open Knowledge Format: standard markdown links + OKF         
+ frontmatter.                                                                  
+ - ``markdown`` — Obsidian-style ``[]``, original frontmatter kept.            
+                                                                               
+ Snapshot, not two-way sync: edits made outside OKS do not flow back.          
+ See CONSTITUTION A4 for the four relationships encoded as links.              
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --output  -o      <path>  Output directory [default: wiki-export]           │
+│ --format  -f      <str>   okf (open standard) or markdown (Obsidian         │
+│                           wikilink)                                         │
+│                           [default: okf]                                    │
+│ --help                    Show this message and exit.                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== use --help (root) =====
+                                                                               
+ Usage: python -m knowledge_studio.cli use [OPTIONS] {slug}                    
+                                                                               
+ Record an explicit use of a wiki page — the memory-curve signal.              
+                                                                               
+ Recall and search are read-only: a query does not count as a use. Call        
+ this when a page is actually injected or applied so that access_count         
+ reflects real usage, not query frequency. This signal affects ranking only;   
+ it does not promote a page or change its confidence/status.                   
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    slug      <str>  Slug of a page that was actually used/injected        │
+│                       [required]                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --observation        <str>  Exact evaluation observation ID; never inferred │
+│ --help                      Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+

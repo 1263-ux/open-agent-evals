@@ -1,0 +1,87 @@
+schema_version: "0.1"
+kind: evaluation-pack
+id: "software-cli-refactor-gate"
+title: "CLI module extraction: prove a 4451-line monolith was split without changing behaviour"
+domain: "software-engineering"
+version: "0.2.0"
+status: "active"
+language: "en"
+summary: >-
+  A verification gate for "pure structural refactor" claims. It answers one question with machine-checkable
+  evidence: when a monolithic CLI is split into per-group modules, did the externally observable behaviour
+  and every moved function body stay identical? Runtime-only evidence is treated as insufficient — the gate
+  requires a static pass so that branches which never execute on the evaluator's OS still get checked.
+task:
+  objective: >-
+    Move one or more command groups out of a monolithic CLI module into dedicated modules without changing the
+    command surface, help text, test failure set, or any moved function body.
+  deliverables:
+    - "Refactored source tree (new modules + imports/registration in the original module)"
+    - "Baseline and post-change command tree dumps"
+    - "Baseline and post-change help text for every moved group"
+    - "JUnit XML from one full test run before and one after"
+    - "Gate output: failure-set diff, body-equivalence report, static resolution report"
+  constraints:
+    - "The baseline is the upstream revision, not a locally modified tree"
+    - "One command group per slice; each slice is independently verifiable"
+    - "No behaviour edits inside a structural slice; behaviour fixes go into their own slice"
+    - "Failure counts are never a criterion, only the set of failing test ids"
+    - "Every claim must be reproducible from the recorded commands"
+  out_of_scope:
+    - "Performance tuning"
+    - "Changing CLI surface or help wording"
+    - "Reorganising tests"
+inputs:
+  fixtures: []
+  references:
+    - "docs/evaluation-protocol.md"
+    - "GOVERNANCE.md"
+  source_revision: "parameterised: the repository under refactor at its upstream baseline"
+evaluation:
+  rubric:
+    path: "rubric.yaml"
+    version: "0.2"
+  hard_constraints:
+    - "Command tree is identical before and after (sorted line diff empty)."
+    - "Help text for every moved group is byte-identical."
+    - "No test id appears in the post-change failure set that was not in the baseline failure set."
+    - "Every function claimed as moved has an identical AST fingerprint (args, returns, docstring, body)."
+    - "No module under refactor has an undefined global name (static bytecode scan)."
+  failure_conditions:
+    - "A command disappears, is renamed, or changes its group."
+    - "Help text differs in any byte, including option order or default rendering."
+    - "A new failing test id appears and is explained away as environment noise."
+    - "A moved function body was silently edited (including a dropped import)."
+    - "Evidence is only a failure count instead of a failure-set diff."
+  evaluator:
+    modes: ["automated", "human"]
+    independence_required: true
+execution:
+  instructions: "evaluation.md"
+  environment:
+    - "Python 3.11+"
+    - "Repository with an installed test suite runnable by pytest"
+    - "A shell able to run the four gate tools"
+  tools:
+    - "tools/cli_tree.py"
+    - "tools/junit_diff.py"
+    - "tools/block_equivalence.py"
+    - "tools/module_globals.py"
+  budget:
+    time_limit: null
+    token_limit: null
+    monetary_limit: null
+  reproducibility_notes:
+    - "Capture the baseline artifacts from a clean checkout of the upstream revision before touching code."
+    - "Run baseline and post-change suites with the same interpreter, same command, same PYTHONPATH order."
+    - "Export the pre-split file with `git show <base>:path/to/module.py > base.py` instead of relying on a working copy."
+    - "Keep the source-snapshot file out of the repository; it is an input to the gate, not a deliverable."
+provenance:
+  created_at: "2026-11-19"
+  owners: ["open-agent-evals maintainers"]
+  sources:
+    - "Derived from a real refactor of the oks CLI (8761a41: 4451 lines -> 616 lines across 14 modules, 87 moved functions)."
+  license_review: "Tooling authored for this repository; no third-party code copied."
+  change_log:
+    - "0.1.0: initial gate with command tree, help parity and junit failure-set diff."
+    - "0.2.0: added body-equivalence and static resolution gates after a dropped `import shlex` passed every runtime gate."

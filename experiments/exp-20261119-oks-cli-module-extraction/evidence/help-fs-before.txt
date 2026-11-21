@@ -1,0 +1,146 @@
+===== fs  --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs [OPTIONS] COMMAND [ARGS]...          
+                                                                               
+ Read-only virtual context filesystem.                                         
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ ls         List the direct children of a public VFS directory.              │
+│ tree       Show a bounded recursive directory tree.                         │
+│ stat       Show metadata for a public VFS node.                             │
+│ read       Read a bounded UTF-8 text page.                                  │
+│ read-many  Read multiple bounded UTF-8 text files in one CLI invocation.    │
+│ overview   Summarize a public VFS directory.                                │
+│ find       Find literal path or UTF-8 content matches.                      │
+│ inspect    Execute a measured VFS call and retain real stage timings.       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs ls --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs ls [OPTIONS] {uri}                   
+                                                                               
+ List the direct children of a public VFS directory.                           
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uri      <str>  Canonical oks:// URI. [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --format        <str>  table or json [default: table]                       │
+│ --help                 Show this message and exit.                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs tree --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs tree [OPTIONS] {uri}                 
+                                                                               
+ Show a bounded recursive directory tree.                                      
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uri      <str>  Canonical oks:// URI. [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --depth              <int>  Traversal depth (0..10). [default: 3]           │
+│ --max-entries        <int>  Maximum returned entries. [default: 1000]       │
+│ --format             <str>  table or json [default: table]                  │
+│ --help                      Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs stat --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs stat [OPTIONS] {uri}                 
+                                                                               
+ Show metadata for a public VFS node.                                          
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uri      <str>  Canonical oks:// URI. [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --format        <str>  table or json [default: table]                       │
+│ --help                 Show this message and exit.                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs read --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs read [OPTIONS] {uri}                 
+                                                                               
+ Read a bounded UTF-8 text page.                                               
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uri      <str>  Canonical oks:// URI. [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --offset        <int>  Character offset. [default: 0]                       │
+│ --limit         <int>  Maximum characters. [default: 20000]                 │
+│ --format        <str>  table or json [default: table]                       │
+│ --help                 Show this message and exit.                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs read-many --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs read-many [OPTIONS] {uris}...        
+                                                                               
+ Read multiple bounded UTF-8 text files in one CLI invocation.                 
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uris      <str>  Canonical oks:// file URIs. [required]                │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --limit                  <int>  Maximum characters per file.                │
+│                                 [default: 20000]                            │
+│ --max-total-chars        <int>  Maximum characters returned across all      │
+│                                 files.                                      │
+│                                 [default: 8388608]                          │
+│ --format                 <str>  table or json [default: table]              │
+│ --help                          Show this message and exit.                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs overview --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs overview [OPTIONS] {uri}             
+                                                                               
+ Summarize a public VFS directory.                                             
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uri      <str>  Canonical oks:// URI. [required]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --format        <str>  table or json [default: table]                       │
+│ --help                 Show this message and exit.                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs find --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs find [OPTIONS] {query}               
+                                                                               
+ Find literal path or UTF-8 content matches.                                   
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    query      <str>  Case-insensitive literal query. [required]           │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ *  --under              <str>  Directory oks:// URI. [required]             │
+│    --max-results        <int>  Maximum matches (1..200). [default: 50]      │
+│    --format             <str>  table or json [default: table]               │
+│    --help                      Show this message and exit.                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+===== fs inspect --help =====
+                                                                               
+ Usage: python -m knowledge_studio.cli fs inspect [OPTIONS] {uri}              
+                                                                               
+ Execute a measured VFS call and retain real stage timings.                    
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    uri      <str>  [required]                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --operation        <str>  [default: ls]                                     │
+│ --query            <str>                                                    │
+│ --offset           <int>  [default: 0]                                      │
+│ --limit            <int>  [default: 20000]                                  │
+│ --help                    Show this message and exit.                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+

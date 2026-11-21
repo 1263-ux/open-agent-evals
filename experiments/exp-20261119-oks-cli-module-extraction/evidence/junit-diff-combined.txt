@@ -1,0 +1,67 @@
+# Gate 3 — failure-set parity (classname::name, not failure count)
+
+## B2-3 (transitional PYTHONPATH): b2-3-base-20261119.xml -> b2-3-full-20261119.xml
+base : {'tests': 1738, 'failures': 16, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 16, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 0
+after-only failures (NEW) = 0
+identical: True
+
+## B2-3 + B3-1: b3-base-20261119.xml -> b3-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 3, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 2
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+  FIXED/ABSENT cli.tests.test_linked_sources::test_team_timestamp_metadata_is_json_safe_in_contexts_and_document_reader
+after-only failures (NEW) = 0
+identical: False
+
+## + B4-1 metrics: b3-base-20261119.xml -> b4-1-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 4, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 1
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+after-only failures (NEW) = 0
+identical: False
+
+## + B4-2 trace: b3-base-20261119.xml -> b4-2-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 3, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 2
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+  FIXED/ABSENT cli.tests.test_linked_sources::test_team_timestamp_metadata_is_json_safe_in_contexts_and_document_reader
+after-only failures (NEW) = 0
+identical: False
+
+## + B4-3 wiki: b3-base-20261119.xml -> b4-3-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 4, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 1
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+after-only failures (NEW) = 0
+identical: False
+
+## + B4-4 fs: b3-base-20261119.xml -> b4-4-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 4, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 1
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+after-only failures (NEW) = 0
+identical: False
+
+## + B4-5 drafts/config/sources: b3-base-20261119.xml -> b4-5-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 4, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 1
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+after-only failures (NEW) = 0
+identical: False
+
+## + B4-6 capability/ingest/eval: b3-base-20261119.xml -> b4-6-full-20261119.xml
+base : {'tests': 1738, 'failures': 5, 'errors': 0, 'skipped': 3}
+after: {'tests': 1738, 'failures': 4, 'errors': 0, 'skipped': 3}
+base-only failures (fixed/absent) = 1
+  FIXED/ABSENT cli.tests.test_hooks::test_hook_recall_cli_reuses_policy_and_history_without_prompt_leakage
+after-only failures (NEW) = 0
+identical: False
+

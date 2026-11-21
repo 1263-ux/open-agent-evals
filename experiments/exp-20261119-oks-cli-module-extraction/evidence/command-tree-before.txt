@@ -1,0 +1,160 @@
+capability
+capability guide
+capability install
+capability list
+capability status
+capture
+capture connect
+capture extract
+capture retry
+capture status
+capture sync
+config
+config init
+config set
+config show
+decay
+distill
+drafts
+drafts get
+drafts list
+drafts promote
+drafts reject
+eval
+eval candidates
+eval capture
+eval compare
+eval export
+eval recall
+eval review
+feedback
+feedback context
+feedback export
+feedback forget
+feedback list
+feedback propose
+feedback record
+feedback review
+feedback withdraw
+fs
+fs find
+fs inspect
+fs ls
+fs overview
+fs read
+fs read-many
+fs stat
+fs tree
+handoff
+handoff check
+handoff prepare
+hook
+hook history
+hook install
+hook recall
+hook status
+ingest
+ingest finalize
+ingest prepare
+ingest run
+ingest validate
+init
+layout-migrate
+lint
+mail
+mail ack
+mail archive
+mail count
+mail delegate
+mail inbox
+mail read
+mail reply
+mail send
+mail sent
+mail serve
+mail setup
+mail snapshot
+mail thread
+mail view
+mail wait
+metrics
+onboarding
+onboarding complete
+onboarding reset
+onboarding skip
+onboarding status
+raw-commit
+recall
+registry
+registry bind
+registry list
+registry remove
+schema
+schema show
+security
+security sanitize
+skills
+skills derive
+skills diff
+skills import
+skills install-router
+skills list
+skills load
+skills merge-prepare
+skills merge-preview
+skills restore-router
+skills search
+skills unload
+skills versions
+skills-install
+sources
+sources inspect
+sources link
+sources list
+sources unlink
+status
+task
+task begin
+task cancel
+task checkpoint
+task clear
+task complete
+task handoff
+task list
+task overview
+task refresh
+task remind
+task remind add
+task remind list
+task remind update
+task reopen
+task select
+task show
+task sources
+task start
+team
+team init
+team sync
+trace
+trace append
+trace blocker
+trace feedback
+trace finish
+trace judge
+trace propose
+trace show
+trace start
+trace validate
+use
+wiki
+wiki archive
+wiki create
+wiki domains
+wiki export
+wiki get
+wiki list
+wiki pin
+wiki unarchive
+wiki use
+workbuddy
+workbuddy doctor

@@ -1,0 +1,204 @@
+##### --help
+                                                                               
+ Usage: python -m knowledge_studio.cli [OPTIONS] COMMAND [ARGS]...             
+                                                                               
+ Open Knowledge Studio — file-based knowledge engineering CLI.                 
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --version             -V        Show the oks version and exit.              │
+│ --install-completion            Install completion for the current shell.   │
+│ --show-completion               Show completion for the current shell, to   │
+│                                 copy it or customize the installation.      │
+│ --help                          Show this message and exit.                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ raw-commit      Validate an Agent manifest and assemble a Raw Bundle v0.2.  │
+│ recall          Two-path recall: episodic (raw/) + knowledge (wiki/).       │
+│ layout-migrate  Unify legacy goal/discuss/skill buckets with a resumable    │
+│                 local audit.                                                │
+│ use             Record an explicit use of a wiki page — the memory-curve    │
+│                 signal.                                                     │
+│ status          Show knowledge base overview.                               │
+│ decay           Apply decay — drop wiki pages below threshold score.        │
+│ lint            Run health check on the knowledge base.                     │
+│ metrics         Show 4-dimension knowledge metrics, or --html for usage     │
+│                 report.                                                     │
+│ distill         Run maintenance cycle: decay + evolve knowledge.            │
+│ init            Scaffold a new knowledge INSTANCE folder (e.g. your         │
+│                 personal artboy-knowledge-studio).                          │
+│ skills-install  Materialize bundled skills into supported Agent directories │
+│                 (current KB).                                               │
+│ capture         Connect actual daily conversations and readings to Raw and  │
+│                 pending knowledge.                                          │
+│ wiki            Wiki page management.                                       │
+│ skills          Manage Skills under Wiki: import, review, search and load   │
+│                 on demand.                                                  │
+│ drafts          Draft proposal management.                                  │
+│ config          Global configuration (~/.oks/config.json).                  │
+│ hook            Optional editor hooks for recall, conflict detection,       │
+│                 collaboration, and workflow.                                │
+│ mail            Agent-to-agent mail (inbox/sent).                           │
+│ handoff         Freeze and verify task context for an existing Mail         │
+│                 handoff.                                                    │
+│ feedback        Explicit private feedback, candidate review and withdrawal. │
+│                 Scope labels are not authentication.                        │
+│ task            Select a task once, save progress, and resume with checked  │
+│                 sources.                                                    │
+│ registry        Terminal registry (agent+cwd -> profile/goal).              │
+│ eval            Offline recall evaluation and run comparison.               │
+│ sources         Link independent read-only Git knowledge repositories.      │
+│ onboarding      Shared conversation/Studio learning progress.               │
+│ trace           Append-only execution traces and feedback.                  │
+│ workbuddy       WorkBuddy local Agent workflow.                             │
+│ fs              Read-only virtual context filesystem.                       │
+│ capability      Optional modality capabilities; core dependencies stay      │
+│                 lightweight.                                                │
+│ schema          Protocol document shapes an Agent must author.              │
+│ security        Credential redaction for provider raw output.               │
+│ ingest          Agent-native ingestion preparation and execution.           │
+│ team            Shared team knowledge-base bootstrap and onboarding.        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### init --help
+                                                                               
+ Usage: python -m knowledge_studio.cli init [OPTIONS] {path}                   
+                                                                               
+ Scaffold a new knowledge INSTANCE folder (e.g. your personal                  
+ artboy-knowledge-studio).                                                     
+                                                                               
+ Creates the bucket structure and a .gitignore that TRACKS your memory         
+ (wiki/, drafts/, profiles/) while ignoring only per-machine state (.oks/).    
+ Points ~/.oks/config.json at the new folder only when no active KB is         
+ registered yet; pass --set-default to switch an existing one.                 
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│ *    path      <str>  Target directory for the new knowledge instance       │
+│                       [required]                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --set-default    --no-set-default      Register this folder as the active   │
+│                                        KB in ~/.oks/config.json. Default:   │
+│                                        only when no active KB is registered │
+│                                        yet                                  │
+│ --git            --no-git              Run `git init` in the instance       │
+│                                        folder                               │
+│                                        [default: git]                       │
+│ --upgrade                              Refresh bundled skills and hooks;    │
+│                                        preserve existing knowledge and      │
+│                                        settings, and add missing defaults   │
+│ --force                                Scaffold into a non-empty directory  │
+│                                        that is not already a knowledge base │
+│ --help                                 Show this message and exit.          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### team --help
+                                                                               
+ Usage: python -m knowledge_studio.cli team [OPTIONS] COMMAND [ARGS]...        
+                                                                               
+ Shared team knowledge-base bootstrap and onboarding.                          
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ init  Create a shared team instance on top of the normal OKS scaffold.      │
+│ sync  One-step team transport: commit shared files, rebase, optionally      │
+│       push.                                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### team init --help
+                                                                               
+ Usage: python -m knowledge_studio.cli team init [OPTIONS] [path]              
+                                                                               
+ Create a shared team instance on top of the normal OKS scaffold.              
+                                                                               
+ Team knowledge is still stored as tracked Markdown under profiles/, raw/,     
+ wiki/, and drafts/. This command only adds an explicit team-oriented entry    
+ point and creates a minimal team profile; goals are created by the user.      
+                                                                               
+┌─ Arguments ─────────────────────────────────────────────────────────────────┐
+│   path      <str>  Target directory for the shared team knowledge instance  │
+│                    [default: ./team-knowledge-studio]                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --name                               <str>  Human-readable team name        │
+│                                             (defaults to the folder name).  │
+│ --set-default    --no-set-default           Register this folder as the     │
+│                                             active KB (default: only when   │
+│                                             none exists).                   │
+│ --git            --no-git                   Initialize a Git repository for │
+│                                             shared team history.            │
+│                                             [default: git]                  │
+│ --upgrade                                   Refresh bundled assets while    │
+│                                             keeping team knowledge files    │
+│                                             intact.                         │
+│ --force                                     Scaffold into a non-empty       │
+│                                             directory that is not already a │
+│                                             knowledge base.                 │
+│ --help                                      Show this message and exit.     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### team sync --help
+                                                                               
+ Usage: python -m knowledge_studio.cli team sync [OPTIONS]                     
+                                                                               
+ One-step team transport: commit shared files, rebase, optionally push.        
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --path                    <str>  Knowledge base root                        │
+│ --push       --no-push           Push the committed team files to origin    │
+│                                  [default: no-push]                         │
+│ --message                 <str>  Commit message for shared files            │
+│                                  [default: 同步 OKS 团队资料]               │
+│ --help                           Show this message and exit.                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### onboarding --help
+                                                                               
+ Usage: python -m knowledge_studio.cli onboarding [OPTIONS] COMMAND [ARGS]...  
+                                                                               
+ Shared conversation/Studio learning progress.                                 
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ──────────────────────────────────────────────────────────────────┐
+│ status    Read the same progress that Studio displays; no completion is     │
+│           inferred.                                                         │
+│ complete  Record an explicitly finished teaching step: discuss, goals or    │
+│           learning.                                                         │
+│ skip      Skip teaching without marking its steps complete.                 │
+│ reset     Explicitly reopen the three-step teaching flow.                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### onboarding status --help
+                                                                               
+ Usage: python -m knowledge_studio.cli onboarding status [OPTIONS]             
+                                                                               
+ Read the same progress that Studio displays; no completion is inferred.       
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --path        <str>                                                         │
+│ --help               Show this message and exit.                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+##### skills-install --help
+                                                                               
+ Usage: python -m knowledge_studio.cli skills-install [OPTIONS]                
+                                                                               
+ Materialize bundled skills into supported Agent directories (current KB).     
+                                                                               
+ Use after upgrading oks to refresh the minimal oh-my-oks entry,               
+ without re-running full `oks init`.                                           
+                                                                               
+┌─ Options ───────────────────────────────────────────────────────────────────┐
+│ --force                     Overwrite existing skills                       │
+│ --all-bundled               Opt in to legacy and specialized bundled Skills │
+│ --consolidate               Archive old bundled host Skills and keep the    │
+│                             minimal core entry                              │
+│ --global                    Install only oh-my-oks into one global host     │
+│                             directory                                       │
+│ --editor             <str>  Global host: codex, claude or agents            │
+│ --help                      Show this message and exit.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+

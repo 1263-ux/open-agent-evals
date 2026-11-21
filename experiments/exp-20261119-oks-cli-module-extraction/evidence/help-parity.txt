@@ -1,0 +1,10 @@
+# Gate 2 — help text parity (byte-for-byte)
+
+instance (B2-2): invocations=8 before_bytes=19730 after_bytes=19730 identical=True
+mail + registry (B2-3): invocations=9 before_bytes=23157 after_bytes=23157 identical=True
+trace (B4-2): invocations=10 before_bytes=17458 after_bytes=17458 identical=True
+wiki (B4-3): invocations=11 before_bytes=18595 after_bytes=18595 identical=True
+fs (B4-4): invocations=9 before_bytes=16153 after_bytes=16153 identical=True
+drafts+config+sources (B4-5): invocations=14 before_bytes=20563 after_bytes=20563 identical=True
+capability+ingest+eval (B4-6): invocations=17 before_bytes=29515 after_bytes=29515 identical=True
+root (B4-3..B4-6): before_bytes=5581 after_bytes=5581 identical=True

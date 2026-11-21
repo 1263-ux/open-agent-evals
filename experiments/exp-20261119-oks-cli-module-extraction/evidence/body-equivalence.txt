@@ -1,0 +1,130 @@
+# Gate 4 — function body equivalence (AST)
+
+## mail_cli.py  (moved functions: 26)
+delegation shims (not verbatim by design): _emit_json
+IDENTICAL _is_safe_agent_id            base_decor=[] new_decor=[]
+IDENTICAL _mail_agent_id               base_decor=[] new_decor=[]
+IDENTICAL _mail_session_id             base_decor=[] new_decor=[]
+IDENTICAL _mail_machine_id             base_decor=[] new_decor=[]
+IDENTICAL _mail_evidence_refs          base_decor=[] new_decor=[]
+IDENTICAL _mail_action_result          base_decor=[] new_decor=[]
+IDENTICAL _emit_mail_action            base_decor=[] new_decor=[]
+IDENTICAL mail_send                    base_decor=["mail_app.command('send')"] new_decor=["app.command('send')"]
+IDENTICAL mail_delegate                base_decor=["mail_app.command('delegate')"] new_decor=["app.command('delegate')"]
+IDENTICAL _mail_unread                 base_decor=[] new_decor=[]
+IDENTICAL mail_inbox                   base_decor=["mail_app.command('inbox')"] new_decor=["app.command('inbox')"]
+IDENTICAL mail_sent                    base_decor=["mail_app.command('sent')"] new_decor=["app.command('sent')"]
+IDENTICAL mail_thread                  base_decor=["mail_app.command('thread')"] new_decor=["app.command('thread')"]
+IDENTICAL mail_reply                   base_decor=["mail_app.command('reply')"] new_decor=["app.command('reply')"]
+IDENTICAL mail_read                    base_decor=["mail_app.command('read')"] new_decor=["app.command('read')"]
+IDENTICAL mail_count                   base_decor=["mail_app.command('count')"] new_decor=["app.command('count')"]
+IDENTICAL mail_ack                     base_decor=["mail_app.command('ack')"] new_decor=["app.command('ack')"]
+IDENTICAL mail_archive                 base_decor=["mail_app.command('archive')"] new_decor=["app.command('archive')"]
+IDENTICAL mail_setup                   base_decor=["mail_app.command('setup')"] new_decor=["app.command('setup')"]
+IDENTICAL mail_serve                   base_decor=["mail_app.command('serve')"] new_decor=["app.command('serve')"]
+IDENTICAL mail_view                    base_decor=["mail_app.command('view')"] new_decor=["app.command('view')"]
+IDENTICAL mail_snapshot                base_decor=["mail_app.command('snapshot')"] new_decor=["app.command('snapshot')"]
+IDENTICAL mail_wait                    base_decor=["mail_app.command('wait')"] new_decor=["app.command('wait')"]
+IDENTICAL registry_list                base_decor=["registry_app.command('list')"] new_decor=["registry_app.command('list')"]
+IDENTICAL registry_bind                base_decor=["registry_app.command('bind')"] new_decor=["registry_app.command('bind')"]
+IDENTICAL registry_remove              base_decor=["registry_app.command('remove')"] new_decor=["registry_app.command('remove')"]
+functions checked: 26, not verbatim: 0
+
+## metrics_html.py  (moved functions: 1)
+IDENTICAL _generate_metrics_html       base_decor=[] new_decor=[]
+functions checked: 1, not verbatim: 0
+
+## trace_cli.py  (moved functions: 11)
+delegation shims (not verbatim by design): _emit_json
+IDENTICAL _parse_json_object           base_decor=[] new_decor=[]
+IDENTICAL _append_trace_feedback_jsonl base_decor=[] new_decor=[]
+IDENTICAL trace_start                  base_decor=["trace_app.command('start')"] new_decor=["trace_app.command('start')"]
+IDENTICAL trace_append                 base_decor=["trace_app.command('append')"] new_decor=["trace_app.command('append')"]
+IDENTICAL trace_judge                  base_decor=["trace_app.command('judge')"] new_decor=["trace_app.command('judge')"]
+IDENTICAL trace_feedback               base_decor=["trace_app.command('feedback')"] new_decor=["trace_app.command('feedback')"]
+IDENTICAL trace_blocker                base_decor=["trace_app.command('blocker')"] new_decor=["trace_app.command('blocker')"]
+IDENTICAL trace_propose                base_decor=["trace_app.command('propose')"] new_decor=["trace_app.command('propose')"]
+IDENTICAL trace_finish                 base_decor=["trace_app.command('finish')"] new_decor=["trace_app.command('finish')"]
+IDENTICAL trace_validate               base_decor=["trace_app.command('validate')"] new_decor=["trace_app.command('validate')"]
+IDENTICAL trace_show                   base_decor=["trace_app.command('show')"] new_decor=["trace_app.command('show')"]
+functions checked: 11, not verbatim: 0
+
+## wiki_cli.py  (moved functions: 10)
+IDENTICAL wiki_list                    base_decor=["wiki_app.command('list')"] new_decor=["wiki_app.command('list')"]
+IDENTICAL wiki_get                     base_decor=["wiki_app.command('get')"] new_decor=["wiki_app.command('get')"]
+IDENTICAL wiki_domains                 base_decor=["wiki_app.command('domains')"] new_decor=["wiki_app.command('domains')"]
+IDENTICAL wiki_create                  base_decor=["wiki_app.command('create')"] new_decor=["wiki_app.command('create')"]
+IDENTICAL wiki_pin                     base_decor=["wiki_app.command('pin')"] new_decor=["wiki_app.command('pin')"]
+IDENTICAL wiki_archive                 base_decor=["wiki_app.command('archive')"] new_decor=["wiki_app.command('archive')"]
+IDENTICAL wiki_unarchive               base_decor=["wiki_app.command('unarchive')"] new_decor=["wiki_app.command('unarchive')"]
+IDENTICAL _mark_inject_used            base_decor=[] new_decor=[]
+IDENTICAL wiki_use                     base_decor=["app.command('use')", "wiki_app.command('use')"] new_decor=["wiki_app.command('use')"]
+IDENTICAL wiki_export                  base_decor=["wiki_app.command('export')"] new_decor=["wiki_app.command('export')"]
+functions checked: 10, not verbatim: 0
+
+## fs_cli.py  (moved functions: 12)
+delegation shims (not verbatim by design): _emit_json, _validate_output_format
+IDENTICAL _vfs_success                 base_decor=[] new_decor=[]
+IDENTICAL _vfs_error                   base_decor=[] new_decor=[]
+IDENTICAL _render_vfs_text             base_decor=[] new_decor=[]
+IDENTICAL _run_vfs                     base_decor=[] new_decor=[]
+IDENTICAL fs_ls                        base_decor=["fs_app.command('ls')"] new_decor=["fs_app.command('ls')"]
+IDENTICAL fs_tree                      base_decor=["fs_app.command('tree')"] new_decor=["fs_app.command('tree')"]
+IDENTICAL fs_stat                      base_decor=["fs_app.command('stat')"] new_decor=["fs_app.command('stat')"]
+IDENTICAL fs_read                      base_decor=["fs_app.command('read')"] new_decor=["fs_app.command('read')"]
+IDENTICAL fs_read_many                 base_decor=["fs_app.command('read-many')"] new_decor=["fs_app.command('read-many')"]
+IDENTICAL fs_overview                  base_decor=["fs_app.command('overview')"] new_decor=["fs_app.command('overview')"]
+IDENTICAL fs_find                      base_decor=["fs_app.command('find')"] new_decor=["fs_app.command('find')"]
+IDENTICAL fs_inspect                   base_decor=["fs_app.command('inspect')"] new_decor=["fs_app.command('inspect')"]
+functions checked: 12, not verbatim: 0
+
+## drafts_cli.py  (moved functions: 4)
+IDENTICAL drafts_list                  base_decor=["drafts_app.command('list')"] new_decor=["drafts_app.command('list')"]
+IDENTICAL drafts_get                   base_decor=["drafts_app.command('get')"] new_decor=["drafts_app.command('get')"]
+IDENTICAL drafts_promote               base_decor=["drafts_app.command('promote')"] new_decor=["drafts_app.command('promote')"]
+IDENTICAL drafts_reject                base_decor=["drafts_app.command('reject')"] new_decor=["drafts_app.command('reject')"]
+functions checked: 4, not verbatim: 0
+
+## config_cli.py  (moved functions: 3)
+IDENTICAL config_init                  base_decor=["config_app.command('init')"] new_decor=["config_app.command('init')"]
+IDENTICAL config_show                  base_decor=["config_app.command('show')"] new_decor=["config_app.command('show')"]
+IDENTICAL config_set                   base_decor=["config_app.command('set')"] new_decor=["config_app.command('set')"]
+functions checked: 3, not verbatim: 0
+
+## sources_cli.py  (moved functions: 4)
+delegation shims (not verbatim by design): _emit_json
+IDENTICAL sources_link                 base_decor=["sources_app.command('link')"] new_decor=["sources_app.command('link')"]
+IDENTICAL sources_inspect              base_decor=["sources_app.command('inspect')"] new_decor=["sources_app.command('inspect')"]
+IDENTICAL sources_list                 base_decor=["sources_app.command('list')"] new_decor=["sources_app.command('list')"]
+IDENTICAL sources_unlink               base_decor=["sources_app.command('unlink')"] new_decor=["sources_app.command('unlink')"]
+functions checked: 4, not verbatim: 0
+
+## capability_cli.py  (moved functions: 5)
+delegation shims (not verbatim by design): _emit_json
+IDENTICAL capability_list              base_decor=["capability_app.command('list')"] new_decor=["capability_app.command('list')"]
+IDENTICAL _capability_already_installed base_decor=[] new_decor=[]
+IDENTICAL capability_install           base_decor=["capability_app.command('install')"] new_decor=["capability_app.command('install')"]
+IDENTICAL capability_status_cmd        base_decor=["capability_app.command('status')"] new_decor=["capability_app.command('status')"]
+IDENTICAL capability_guide_cmd         base_decor=["capability_app.command('guide')"] new_decor=["capability_app.command('guide')"]
+functions checked: 5, not verbatim: 0
+
+## ingest_cli.py  (moved functions: 5)
+delegation shims (not verbatim by design): _emit_json
+IDENTICAL _extractor_env_for           base_decor=[] new_decor=[]
+IDENTICAL ingest_validate_cmd          base_decor=["ingest_app.command('validate')"] new_decor=["ingest_app.command('validate')"]
+IDENTICAL ingest_finalize_cmd          base_decor=["ingest_app.command('finalize')"] new_decor=["ingest_app.command('finalize')"]
+IDENTICAL ingest_prepare_cmd           base_decor=["ingest_app.command('prepare')"] new_decor=["ingest_app.command('prepare')"]
+IDENTICAL ingest                       base_decor=["ingest_app.command('run')"] new_decor=["ingest_app.command('run')"]
+functions checked: 5, not verbatim: 0
+
+## eval_cli.py  (moved functions: 6)
+delegation shims (not verbatim by design): _emit_json, _validate_output_format
+IDENTICAL eval_candidates              base_decor=["eval_app.command('candidates')"] new_decor=["eval_app.command('candidates')"]
+IDENTICAL eval_capture                 base_decor=["eval_app.command('capture')"] new_decor=["eval_app.command('capture')"]
+IDENTICAL eval_review                  base_decor=["eval_app.command('review')"] new_decor=["eval_app.command('review')"]
+IDENTICAL eval_export                  base_decor=["eval_app.command('export')"] new_decor=["eval_app.command('export')"]
+IDENTICAL eval_recall                  base_decor=["eval_app.command('recall')"] new_decor=["eval_app.command('recall')"]
+IDENTICAL eval_compare                 base_decor=["eval_app.command('compare')"] new_decor=["eval_app.command('compare')"]
+functions checked: 6, not verbatim: 0
+
+total functions checked: 87, not verbatim: 0
