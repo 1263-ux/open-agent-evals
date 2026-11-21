@@ -1,0 +1,89 @@
+schema_version: "0.1"
+kind: evaluation-pack
+id: "software-recall-regression-gate"
+title: "知识库召回引擎：延迟改造后证明质量零退化"
+domain: "software-engineering"
+version: "0.2.0"
+status: "draft"
+language: "zh-CN"
+summary: "给定一个可运行的知识库召回引擎、一份固定的标注评测集和一个延迟预算，要求执行者降低单次召回延迟，同时证明 R@1 / MRR / nDCG@5 逐项不退化、无过期内容泄漏。用于回归评估，不用于排名或通用能力判断。"
+task:
+  objective: "在不改变检索质量的前提下，把单次召回的 p50 延迟压到约定预算内。"
+  deliverables:
+    - "可检的代码改动（diff 或提交）"
+    - "改造前后各一份完整评测运行结果（含全部 case 的 retrieved 与 latency）"
+    - "逐项对比：R@1 / R@3 / R@5 / MRR / nDCG@5 / p50 / p95"
+    - "实际执行的复跑命令与退出码"
+  constraints:
+    - "不得修改数据集、评测集或本评测包的评分标准"
+    - "不得修改指标计算代码或放宽 stale_leakage 判定"
+    - "两次运行必须使用同一数据集修订、同一 backend、同一 limit"
+    - "不得以降低索引新鲜度保障换取延迟（过期页面不得进入召回结果）"
+  out_of_scope:
+    - "提升检索质量本身"
+    - "新增检索算法或替换 backend"
+    - "跨平台绝对性能比较"
+inputs:
+  fixtures:
+    - id: "zh-ops"
+      path: "fixtures/zh-ops/"
+      language: "zh-CN"
+      bundled: true
+      license: "CC BY 4.0（自撰，随包分发）"
+      summary: >-
+        19 篇中文运营/支持类知识库文档（104 KB）+ 55 条中文查询（v1.0.0 与修正后的 v1.1.0）。
+        自带 KB，无需网络与第三方数据即可建库复跑。覆盖字面、改写、口语、多跳、版本时效、
+        旧版陷阱、中英混合与噪声干扰八类。校验值见 fixtures/zh-ops/README.md。
+    - id: "locomo10"
+      language: "en"
+      bundled: false
+      summary: "LoCoMo 长对话（英文），第三方素材，需按 fixtures/acquire.md 自行获取。"
+  references:
+    - "LoCoMo 数据集（Maharana et al., ACL 2024）：第三方素材，需自行获取，见 fixtures/acquire.md"
+    - "召回评测入口：python -m knowledge_studio.cli eval recall <dataset> --search-backend <backend>"
+  source_revision: "locomo10.json sha256:553cd5a15e25f2ce…；评测集 locomo-eval.yaml sha256:c00ce960f18ab778…（完整值见 fixtures/acquire.md）；zh-ops v1.1.0 sha256:00442cbf2e9ca41a…（完整值见 fixtures/zh-ops/README.md）"
+evaluation:
+  rubric:
+    path: "rubric.yaml"
+    version: "0.1"
+  hard_constraints:
+    - "R@1、MRR、nDCG@5 与基线逐项相等，或差异仅来自浮点舍入（≤1e-6）"
+    - "stale_leakage 保持 0"
+    - "两次运行的 case 数、case_id 集合与 limit 完全一致"
+    - "评测集与 settings/parameters 的 sha256 在两次运行间未变"
+    - "中英文夹具分别报告，不得用加权平均掩盖任一种语言的退化"
+  failure_conditions:
+    - "任何一项质量指标下降"
+    - "修改数据集或评测集后重跑并宣称达标"
+    - "只报告聚合延迟，不提供逐 case 结果"
+    - "关闭索引新鲜度检查，使过期页面进入召回结果"
+    - "把首次调用的建索引时间从 p50 中剔除以显得更快，却未声明"
+  evaluator:
+    modes: ["automated", "human"]
+    independence_required: true
+execution:
+  instructions: "evaluation.md"
+  environment:
+    - "Python 3.13+"
+    - "本地文件系统；不依赖网络检索服务"
+  tools: ["git", "python"]
+  budget:
+    time_limit: null
+    token_limit: null
+    monetary_limit: null
+  reproducibility_notes:
+    - "先跑基线并保留完整运行结果，再做改动；不得事后补跑基线"
+    - "记录操作系统与 Python 版本。Windows 文件系统调用开销显著高于 macOS，不跨平台比较绝对延迟"
+    - "p50 是否包含首次调用（建索引、冷启动）必须说明"
+provenance:
+  created_at: "2026-11-18"
+  owners: ["feng"]
+  sources:
+    - "OKS（open-knowledge-studio）召回路径改造实例：experiments/exp-20261117-oks-recall-backend-reuse"
+    - "OKS 中文召回基线：experiments/exp-20261119-oks-zh-recall"
+    - "LoCoMo 数据集为第三方素材，本包不内置、不转发"
+    - "zh-ops 夹具为本包自撰，随包以 CC BY 4.0 分发"
+  license_review: "LoCoMo 属第三方，未随包分发，已标注获取方式与校验值；zh-ops 为自撰内容，可随包分发"
+  change_log:
+    - "0.1.0: 初版回归门；阈值与证据来自 OKS 上的实际改造实验"
+    - "0.2.0: 内置 zh-ops 中文夹具（19 文档 / 55 case，含 v1.0.0 与 v1.1.0），补上「英文证据不能推出中文可用」的语言覆盖缺口；新增实验 exp-20261119-oks-zh-recall，给出中文三后端基线与三条未命中的成因"

@@ -1,0 +1,55 @@
+rubric_version: "0.1"
+scale:
+  0: "无可检交付物"
+  1: "延迟未改善，或质量出现明显退化"
+  2: "延迟改善但质量/证据有缺口"
+  3: "延迟达标且质量逐项一致，证据可复核"
+  4: "在 3 的基础上，改动小、风险交代清楚、他人可独立复跑"
+dimensions:
+  - id: quality_parity
+    evidence_required: true
+    anchors:
+      0: "没有对比数据"
+      1: "任一质量指标下降"
+      2: "指标一致但 case 集合或 limit 与基线不同"
+      3: "R@1 / MRR / nDCG@5 逐项一致，case 集合相同"
+      4: "3 之上还逐 case 抽检了排序变化"
+  - id: latency_gain
+    evidence_required: true
+    anchors:
+      0: "无延迟数据"
+      1: "p50 未改善"
+      2: "p50 改善但 p95 或尾部明显恶化"
+      3: "p50 与 p95 均改善"
+      4: "3 之上给出耗时构成（哪部分成本被消除）"
+  - id: evidence_integrity
+    evidence_required: true
+    anchors:
+      0: "只有结论，无运行产物"
+      1: "产物与声称的数字不一致"
+      2: "有产物但缺命令、退出码或环境"
+      3: "产物 + 命令 + 退出码 + 环境齐全"
+      4: "3 之上基线可被第三方按记录重跑复现"
+  - id: frozen_state
+    evidence_required: true
+    anchors:
+      0: "未说明评测集是否变动"
+      1: "数据集或指标代码被改过"
+      2: "声称未改，但无 sha 对照"
+      3: "两次运行的 dataset/settings/parameters sha256 一致"
+      4: "3 之上还附了 kb 快照前后一致"
+  - id: change_scope
+    evidence_required: false
+    anchors:
+      0: "无法判断改动范围"
+      1: "夹带了与延迟无关的大范围重写"
+      2: "改动范围偏大但可解释"
+      3: "改动集中在热路径，diff 可读"
+      4: "3 之上没有触碰对外接口，或接口变化被明确声明"
+hard_gates:
+  - "quality_parity >= 3"
+  - "evidence_integrity >= 3"
+notes:
+  - "不设加权总分。"
+  - "延迟与质量分开报告；延迟达标不能抵消质量退化。"
+  - "Windows 与 macOS 的绝对延迟不可直接比较，跨平台只比相对变化。"

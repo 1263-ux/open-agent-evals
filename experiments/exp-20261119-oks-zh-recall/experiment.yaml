@@ -1,0 +1,204 @@
+schema_version: "0.1"
+kind: experiment-record
+id: "exp-20261119-oks-zh-recall"
+title: "中文召回基线：自撰 55 case 夹具，fts5 R@5 0.955，三后端在词表断裂处同败"
+date: "2026-11-19"
+type: "measurement-baseline"
+status: "completed"
+question: "在 CJK 走 jieba 分词的路径上，OKS 召回的真实水平是多少？词法后端与 fusion 在中文上谁更强，失效模式是什么？"
+hypotheses:
+  - "英文集（LoCoMo）的结论不能外推到中文，因为中文走 jieba 分词 + 中文停用词，是与 unicode61 完全不同的分支。"
+  - "fusion 融合的是两个词法后端，在查询与文档没有共享词元时无法互补。"
+  - "`archived: true` 的文档不进入索引，因此 forbidden 用例测的是归档隔离，而不是排序优劣。"
+evaluation:
+  pack_id: "software-recall-regression-gate"
+  pack_version: "0.2.0"
+  rubric_version: "0.1"
+conditions:
+  input_revision: >-
+    oks 8761a41（上游 main）；夹具 fixtures/zh-ops/wiki 19 篇（sha256 见 fixtures/zh-ops/README.md）；
+    数据集 v1.1.0 sha256 前 16 位 00442cbf2e9ca41a；v1.0.0 为 0feb0cffed41fbdd
+  environment:
+    os: "Windows 11"
+    python: "3.14"
+    machine: "单机本地 SSD"
+    kb: "oks-eval-zh：19 篇中文 wiki（104 KB），settings/recall.yaml 与 LoCoMo 库同配置（floor 0.7 / topn 3 / backend fts5）"
+  model_configs: []
+  workflow_configs:
+    - "单次 CLI 调用执行整批评测（无 Agent 参与，无 LLM 调用，无 embedding）"
+  tools_and_skills:
+    - "python -m knowledge_studio.cli eval recall"
+  budget:
+    corpus_size: "19 docs / 104 KB"
+    case_count: 55
+    wall_clock_seconds_per_backend: 4
+  controlled_variables:
+    - "同一 KB、同一 settings/recall.yaml、同一 limit=5"
+    - "六次运行只改 --search-backend 与数据集版本"
+    - "同一机器、同一 Python 版本、同一时段"
+  confounders:
+    - "首跑包含惰性建索引（_maybe_reindex）；六次运行共用同一 .oks/fts5.db，后续运行不再建索引，故 v1.0.0 与 v1.1.0 的 p50 差异含冷热因素。"
+    - "55 case 规模小，单条命中影响 1.8 个百分点，指标粒度粗。"
+    - "Windows 绝对延迟不可与 macOS / Linux 比较。"
+runs:
+  - id: v10-fts5
+    group: "v1.0.0（审计前）"
+    revision: "8761a41"
+    command: "OKS_ROOT=<oks-eval-zh> python -m knowledge_studio.cli eval recall datasets/zh-recall-eval-v1.0.yaml --output zh-fts5-20261119.json --search-backend fts5"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.809091
+      recall_at_3: 0.918182
+      recall_at_5: 0.927273
+      mrr: 0.90303
+      ndcg_at_5: 0.897064
+      stale_leakage: 0.0
+      no_result: 0.0
+      latency_p50_ms: 22.87
+      latency_p95_ms: 43.119
+  - id: v10-native
+    group: "v1.0.0（审计前）"
+    revision: "8761a41"
+    command: "同上，--search-backend native"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.790909
+      recall_at_3: 0.918182
+      recall_at_5: 0.918182
+      mrr: 0.890909
+      ndcg_at_5: 0.88366
+      latency_p50_ms: 44.116
+      latency_p95_ms: 58.896
+  - id: v10-fusion
+    group: "v1.0.0（审计前）"
+    revision: "8761a41"
+    command: "同上，--search-backend fusion"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.809091
+      recall_at_3: 0.918182
+      recall_at_5: 0.918182
+      mrr: 0.90303
+      ndcg_at_5: 0.892751
+      latency_p50_ms: 57.885
+      latency_p95_ms: 85.562
+  - id: v11-fts5
+    group: "v1.1.0（标签修正后，推荐基线）"
+    revision: "8761a41"
+    command: "OKS_ROOT=<oks-eval-zh> python -m knowledge_studio.cli eval recall datasets/zh-recall-eval-v1.1.yaml --output zh-v11-fts5-20261119.json --search-backend fts5"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.836364
+      recall_at_3: 0.945455
+      recall_at_5: 0.954545
+      mrr: 0.921212
+      ndcg_at_5: 0.922279
+      stale_leakage: 0.0
+      no_result: 0.0
+      latency_p50_ms: 26.263
+      latency_p95_ms: 37.686
+  - id: v11-native
+    group: "v1.1.0（标签修正后，推荐基线）"
+    revision: "8761a41"
+    command: "同上，--search-backend native"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.8
+      recall_at_3: 0.945455
+      recall_at_5: 0.945455
+      mrr: 0.9
+      ndcg_at_5: 0.902165
+      latency_p50_ms: 38.958
+      latency_p95_ms: 55.495
+  - id: v11-fusion
+    group: "v1.1.0（标签修正后，推荐基线）"
+    revision: "8761a41"
+    command: "同上，--search-backend fusion"
+    exit_code: 0
+    metrics:
+      recall_at_1: 0.836364
+      recall_at_3: 0.945455
+      recall_at_5: 0.945455
+      mrr: 0.921212
+      ndcg_at_5: 0.917966
+      latency_p50_ms: 56.756
+      latency_p95_ms: 82.87
+results:
+  summary: >-
+    中文 55 case 上 fts5 取得 R@1 0.836 / R@5 0.955 / MRR 0.921 / nDCG@5 0.922，
+    p50 26.3 ms，优于 native（R@5 0.945，p50 39.0 ms）与 fusion（R@5 0.945，p50 56.8 ms）。
+    排序结论与英文 LoCoMo 集一致：默认 fts5 是正确选择，fusion 在中文上不带来收益。
+    55 条中 3 条未完全命中，两条源于查询与文档**零共享词元**（退钱 vs 退款、放量 vs 灰度），
+    一条是多跳标签偏严。
+  comparison:
+    - metric: "recall_at_5（fts5）"
+      baseline: 0.954545
+      note: "native 0.945455 / fusion 0.945455"
+    - metric: "mrr（fts5）"
+      baseline: 0.921212
+      note: "native 0.9 / fusion 0.921212"
+    - metric: "latency_p50_ms（fts5）"
+      baseline: 26.263
+      note: "native 38.958 / fusion 56.756"
+  deviations:
+    - >-
+      标签在运行前写定，但跑完 v1.0.0 后做了一轮自审：zh-038 与 zh-039 的黄金标签指向
+      `archived: true` 的文档，而索引层（search/fts5.py:543）对归档文档做了 SQL 过滤，
+      标签在物理上不可达。据此发布 v1.1.0，只改这两条，v1.0.0 原样保留。
+      两版的五项指标差异完全来自这两条修正（R@5 0.9273 → 0.9545）。
+    - >-
+      v1.0.0 的 p50（22.87 ms）低于 v1.1.0（26.26 ms）不是性能退化：v1.0.0 是首次运行，
+      含建索引；v1.1.0 复用了同一 .oks/fts5.db。该差异不作为延迟证据。
+  conclusion: "supported"
+  confidence: "medium"
+findings:
+  - id: synonym-gap
+    severity: "high"
+    statement: >-
+      中文同义词没有任何桥接。`客户想退钱有什么条件` 的分词为 [什么, 客户, 条件, 退钱]，
+      文档用词为「退款」，两 token 交集为空，仅剩的泛词把「客户成功手册」顶到第一。
+      三个后端在同一 case 上全部落空，说明这是词表层问题，不是排序问题。
+    evidence: "evidence/misses-v11.md"
+  - id: fusion-is-lexical
+    severity: "medium"
+    statement: >-
+      fusion 不是语义层。它在三条未命中上与 fts5 同 rank、同缺失，因为融合对象是
+      fts5 与 native 两个词法后端。把 fusion 当作语义兜底是常见误解。
+    evidence: "evidence/misses-v11.md"
+  - id: archived-excluded
+    severity: "medium"
+    statement: >-
+      `archived: true` 的文档被索引层 SQL 过滤（AND COALESCE(p.archived,0)=0），
+      因此 forbidden 用例恒过，验证的是归档隔离而非排序。这是有效的回归探针
+      （过滤一旦被移除，stale_leakage 会立即跳起），但不能用来证明排序质量。
+    evidence: "evidence/metrics-v11.yaml"
+  - id: doc-vocabulary-gap
+    severity: "low"
+    statement: >-
+      `改了代码怎么逐步放量` 落空，因为 release-train 全文使用「灰度档位」而从未出现「放量」。
+      查询语义正确但文档没写用户会说的词——中文召回质量很大程度取决于文档用词覆盖。
+    evidence: "evidence/misses-v11.md"
+evidence:
+  raw_data:
+    - "evidence/metrics-v11.yaml"
+    - "evidence/misses-v11.md"
+  logs: []
+  artifact_locations:
+    - "domains/software-engineering/recall-regression-gate/fixtures/zh-ops/（夹具与数据集）"
+  evaluator_notes:
+    - "评测由夹具作者本人执行，未达到 GOVERNANCE.md 独立评估条件。"
+    - "标签为单人标注，没有第二人独立标注，因此没有 inter-annotator agreement。"
+    - "未做中文 embedding / 向量后端对照（当前代码 embedding_fallback 默认关闭）。"
+reproducibility:
+  steps:
+    - "把 fixtures/zh-ops/wiki/ 整体拷到 KB 根（形成 <kb>/wiki/ops/*.md）。"
+    - "把 settings/recall.yaml 拷到 <kb>/settings/（与 LoCoMo 库同配置）。"
+    - "export OKS_ROOT=<kb>；export PYTHONPATH=<repo>/cli:<repo>/.venv/Lib/site-packages（cli 必须在前）。"
+    - "python -m knowledge_studio.cli eval recall fixtures/zh-ops/datasets/zh-recall-eval-v1.1.yaml --output out.json --search-backend fts5"
+    - "核对 metrics 六项与 evidence/metrics-v11.yaml 一致。"
+  known_gaps:
+    - "19 篇 / 104 KB 的库偏小，未覆盖长文档、表格密集、代码混杂的中文知识库。"
+    - "单人标注，无双人一致性检验。"
+    - "未验证 embedding 或其它语义后端，因此「词表断裂」之外的语义召回能力未被测量。"
+    - "指标粒度受 55 case 限制，单条命中即 1.8 个百分点。"
+  replay_status: "not-attempted"
