@@ -31,7 +31,7 @@ inputs:
 evaluation:
   rubric:
     path: "rubric.yaml"
-    version: "0.2"
+    version: "0.1"
   hard_constraints:
     - "The acceptance test for discounted subtotal plus full shipping passes."
     - "The existing no-discount test passes."

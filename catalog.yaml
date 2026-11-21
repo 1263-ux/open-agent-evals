@@ -1,0 +1,70 @@
+schema_version: '1'
+generated_by: tooling/build_catalog.py
+assets:
+- kind: evaluation-pack
+  id: game-representative-scene
+  version: 0.1.0
+  status: draft
+  domain: game-development
+  language: zh-CN
+  title: Representative playable game scene
+  summary: 评估一个能体现目标游戏视觉方向、空间组织和核心交互的代表性可体验场景。此包尚待真实项目校准。
+  path: domains/game-development/representative-scene/pack.yaml
+  instructions: domains/game-development/representative-scene/evaluation.md
+  rubric:
+    path: domains/game-development/representative-scene/rubric.yaml
+    version: 0.1-draft
+  hard_gates:
+  - id: design_intent
+    tool: null
+    pass: '>= 3'
+  - id: interaction_and_playability
+    tool: null
+    pass: '>= 3'
+  fixtures:
+  - bundled: false
+    note: 待补充：固定场景任务与项目版本
+  evaluator:
+    modes:
+    - human
+    - automated
+    independence_required: true
+  provenance:
+    created_at: '2026-11-14'
+    owners: []
+    license_review: pending
+- kind: evaluation-pack
+  id: software-maintenance-discount-calculation
+  version: 0.1.0
+  status: active
+  domain: software-engineering
+  language: en
+  title: 'Java 17 maintenance: apply discount to item subtotal, not shipping'
+  summary: A self-contained Maven fixture for testing whether an Agent can diagnose and fix a bounded
+    business-logic bug without changing unrelated behavior.
+  path: domains/software-engineering/maintenance-task/pack.yaml
+  instructions: domains/software-engineering/maintenance-task/evaluation.md
+  rubric:
+    path: domains/software-engineering/maintenance-task/rubric.yaml
+    version: '0.1'
+  hard_gates:
+  - id: behavior_correctness
+    tool: null
+    pass: '>= 3'
+  - id: regression_safety
+    tool: null
+    pass: '>= 3'
+  fixtures:
+  - id: java-discount-calculator
+    bundled: true
+    path: domains/software-engineering/maintenance-task/fixtures/java-discount-calculator
+  evaluator:
+    modes:
+    - automated
+    - human
+    independence_required: true
+  provenance:
+    created_at: '2026-11-14'
+    owners:
+    - open-agent-evals maintainers
+    license_review: project-owned fixture; repository license policy pending
