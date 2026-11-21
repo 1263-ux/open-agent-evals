@@ -68,3 +68,54 @@ assets:
     owners:
     - open-agent-evals maintainers
     license_review: project-owned fixture; repository license policy pending
+- kind: evaluation-pack
+  id: software-skill-router-calibration
+  version: 0.1.0
+  status: active
+  domain: software-engineering
+  language: en
+  title: 'Local Skill router: pick the right Skill, and stay silent otherwise'
+  summary: Measures a local, deterministic skill router on a fixed set of indexed Skills and a fixed prompt
+    set with expected matches. Reports top-1 and top-2 hit rate on positive prompts and the false-positive
+    rate on prompts that should route to nothing, separately per language.
+  path: domains/software-engineering/skill-router-calibration/pack.yaml
+  instructions: domains/software-engineering/skill-router-calibration/evaluation.md
+  rubric:
+    path: domains/software-engineering/skill-router-calibration/rubric.yaml
+    version: '0.1'
+  hard_gates:
+  - id: replayability
+    tool: tools/run_router_eval.py
+    pass: Command, router commit and fixture revision are recorded and the run is deterministic
+  fixtures:
+  - id: router-skills
+    bundled: true
+    path: domains/software-engineering/skill-router-calibration/fixtures/skills
+    license: CC BY 4.0 (authored fixture; dev-system and agent-collab-teardown mirror the maintainer's
+      own Skills)
+  - id: router-prompts
+    bundled: true
+    path: domains/software-engineering/skill-router-calibration/fixtures/prompts.yaml
+    license: CC BY 4.0 (self-authored)
+  evaluator:
+    modes:
+    - automated
+    independence_required: false
+  provenance:
+    created_at: '2026-11-21'
+    owners:
+    - open-agent-evals maintainers
+    license_review: Fixture Skills are authored for this pack; the two mirrored Skills are the maintainer's
+      own content under CC BY 4.0.
+- kind: experiment-record
+  id: exp-20261121-aaw-router-calibration
+  title: 本地 Skill 路由器标定：修复解析与匹配后 top-1 66.7% → 76.2%，误报 2 → 0；声明式双语 trigger 补到 100%
+  date: '2026-11-21'
+  type: controlled-comparison
+  status: completed
+  pack_id: software-skill-router-calibration
+  pack_version: 0.1.0
+  conclusion: supported
+  confidence: low
+  replay_status: attempted
+  path: experiments/exp-20261121-aaw-router-calibration/experiment.yaml

@@ -1,0 +1,71 @@
+version: "1"
+# Each case is run once per language present. `expected` is the set of Skills
+# that a correct router may return at rank 1; an empty set means the prompt
+# should route to nothing.
+cases:
+  - id: refactor
+    expected: [refactor-gate]
+    zh: 把这个 CLI 拆成多个模块，要求命令树和帮助文本完全不变
+    en: Split this CLI into modules with byte-identical command tree and help text
+  - id: recall
+    expected: [recall-eval]
+    zh: 评估一下知识库召回，检查 R@5 和 nDCG 有没有退化
+    en: Measure knowledge base recall and check whether R@5 and nDCG regressed
+  - id: java
+    expected: [java-maintenance]
+    zh: 修一下这个 Java 折扣计算 bug，用 Maven 跑 JUnit
+    en: Fix this Java discount bug and verify with Maven and JUnit
+  - id: migration
+    expected: [data-migration]
+    zh: 给 Postgres 加一列并要求零停机，怎么写迁移
+    en: Add a Postgres column with zero downtime, write the migration
+  - id: docs
+    expected: [doc-writing]
+    zh: 把 README 重写清楚，顺便补 CHANGELOG
+    en: Rewrite the README clearly and update the CHANGELOG
+  - id: teardown
+    expected: [agent-collab-teardown]
+    zh: 对比一下 A2A 和 AgentMail 的消息协议取舍
+    en: Compare the A2A and AgentMail messaging protocols
+  - id: find-skills
+    expected: [find-skills]
+    zh: 有没有现成的 skill 能处理 PDF 表格
+    en: Is there an installable skill that handles PDF tables
+  - id: dev-system
+    expected: [dev-system]
+    zh: 帮我开发一个小功能，从目标到产品交付，遇到分歧先做对比
+  - id: frontend
+    expected: [frontend-design]
+    zh: 这个落地页排版和间距不好看，帮我改改
+    en: The landing page layout and spacing look bad, redesign it
+  - id: vision
+    expected: [vision]
+    zh: 分析一下这张截图里的报错
+    en: Analyze the error shown in this screenshot
+  - id: review
+    expected: [karpathy-guidelines]
+    zh: review 这个 PR，看看我的代码有没有过度设计
+    en: Review this PR for over-engineering before I merge
+
+  - id: neg-click
+    expected: []
+    en: Click the button to continue
+  - id: neg-television
+    expected: []
+    en: How do I repair my television
+  - id: neg-weather
+    expected: []
+    zh: 今天天气怎么样
+    en: What is the weather today
+  - id: neg-translate
+    expected: []
+    zh: 把这句话翻译成法语
+    en: Translate this sentence into French
+  - id: neg-product
+    expected: []
+    zh: 帮我想三个产品名字
+    en: Give me three product name ideas
+  - id: neg-cap
+    expected: []
+    zh: 解释一下 CAP 定理
+    en: Explain the CAP theorem

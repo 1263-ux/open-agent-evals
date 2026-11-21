@@ -1,0 +1,151 @@
+schema_version: "0.1"
+kind: experiment-record
+id: "exp-20261121-aaw-router-calibration"
+title: "本地 Skill 路由器标定：修复解析与匹配后 top-1 66.7% → 76.2%，误报 2 → 0；声明式双语 trigger 补到 100%"
+date: "2026-11-21"
+type: "controlled-comparison"
+status: "completed"
+question: >-
+  在固定的 12 个 Skill 与固定的 24 条中英文 prompt 上，v0.7.1 的前置元数据解析、词形归一与
+  词边界匹配，是否提高了 top-1 命中且不引入误报？跨语言缺口能否只靠声明 trigger 补上？
+hypotheses:
+  - "块标量 description（>-）被解析成字面量后，该 Skill 会从路由中静默消失。"
+  - "无词形归一与无词边界匹配会同时造成漏匹配和错误匹配（click→cli、television→vision）。"
+  - "中英文之间没有共享 token；不声明中文 trigger 的英文描述 Skill 无法路由中文请求。"
+  - "在阈值不变的前提下，仅靠解析与匹配修复不足以补齐跨语言缺口。"
+evaluation:
+  pack_id: "software-skill-router-calibration"
+  pack_version: "0.1.0"
+  rubric_version: "0.1"
+conditions:
+  input_revision: >-
+    fixture v1（12 Skills / 18 cases）。路由器：Adaptive-Agent-Workflow 234e1f4（v0.7.0）
+    对照 64557da（v0.7.1）。两次运行使用同一 fixture、同一解释器、同一机器。
+  environment:
+    os: "Windows 11"
+    python: "3.14.0"
+    pyyaml: "6.0.3"
+    machine: "单机本地 SSD"
+  model_configs: []
+  workflow_configs:
+    - "只调用 capability_index.py 的 write_capabilities_index / match_skills；不经过 hook、不经过 host"
+  tools_and_skills:
+    - "domains/software-engineering/skill-router-calibration/tools/run_router_eval.py"
+  budget:
+    wall_clock_seconds_per_run: 2
+  controlled_variables:
+    - "同一 fixture 目录与同一 prompts.yaml"
+    - "include_home=False，绝不读取机器上已安装的 Skill"
+    - "同一 Python 解释器与同一机器；路由是确定性的，重跑输出一致"
+  confounders:
+    - "fixture 由评测者编写，6 个领域 Skill 是为本评测构造的，非真实生态样本。"
+    - "21 条正例样本很小；本记录只用于比较版本与暴露失败模式，不估计生态级路由质量。"
+    - "remedy 运行修改了 fixture（给 3 个 Skill 增加 trigger），不是与基准的同条件对照。"
+runs:
+  - id: before-v0.7.0
+    group: "基线：v0.7.0 路由器"
+    revision: "Adaptive-Agent-Workflow 234e1f4"
+    command: "python tools/run_router_eval.py --aaw <v0.7.0 worktree> --label 'v0.7.0 (baseline)'"
+    exit_code: 0
+    metrics:
+      zh_top1_hits: 6
+      zh_positives: 11
+      en_top1_hits: 8
+      en_positives: 10
+      all_top1_hits: 14
+      all_positives: 21
+      negative_false_positives: 2
+      negatives: 10
+    evidence: "evidence/before-v0.7.0.txt"
+    note: >-
+      中文 dev-system 用例不是漏掉而是错配到 agent-collab-teardown（4 分），因为块标量让
+      dev-system 描述变成 ">-"，而两个中文大词产生了两分重叠。英文 click→refactor-gate（trigger
+      子串 cli）与 television→vision（名称子串）各记一次误报。
+  - id: after-v0.7.1
+    group: "v0.7.1：块标量解析 + 词形归一 + 词边界 + 名称词权重"
+    revision: "Adaptive-Agent-Workflow 64557da"
+    command: "python tools/run_router_eval.py --aaw <v0.7.1 checkout> --label 'v0.7.1 (...)'"
+    exit_code: 0
+    metrics:
+      zh_top1_hits: 8
+      zh_positives: 11
+      en_top1_hits: 8
+      en_positives: 10
+      all_top1_hits: 16
+      all_positives: 21
+      negative_false_positives: 0
+      negatives: 10
+    evidence: "evidence/after-v0.7.1.txt"
+    note: >-
+      误报清零；dev-system 正确命中；find-skills 通过名称词 "skill" 命中。剩余 5 个漏配全部是
+      跨语言（中文 frontend/vision）或单描述词（review），没有错误匹配。
+  - id: after-v0.7.1-triggers
+    group: "remedy：v0.7.1 + 声明的中英 trigger"
+    revision: "Adaptive-Agent-Workflow 64557da + fixtures/bilingual-triggers.yaml"
+    command: "python tools/run_router_eval.py --aaw <v0.7.1 checkout> --bilingual-triggers --label '...'"
+    exit_code: 0
+    metrics:
+      zh_top1_hits: 11
+      zh_positives: 11
+      en_top1_hits: 10
+      en_positives: 10
+      all_top1_hits: 21
+      all_positives: 21
+      negative_false_positives: 0
+      negatives: 10
+    evidence: "evidence/after-v0.7.1-triggers.txt"
+    note: "给 frontend-design、vision、karpathy-guidelines 增加中文 trigger（vision 另加英文 screenshot）后全部命中，负例仍为 0。"
+results:
+  summary: >-
+    在固定 fixture 上，v0.7.1 把 top-1 命中从 14/21 提到 16/21，把负例误报从 2/10 降到 0/10；
+    剩余漏配全部来自跨语言或单描述词，属于触发词覆盖问题而非匹配算法问题。补上声明式 trigger
+    后达 21/21、误报 0/10。最有价值的结果不是命中率，而是两个此前不可见的失败：块标量会静默
+    移除一个 Skill，且它会导致错配而非漏配；无词边界匹配会把 click 认成 cli、television 认成 vision。
+  comparison:
+    - metric: "top-1 命中（正例）"
+      baseline: "14/21 (66.7%)"
+      optimized: "16/21 (76.2%)"
+      delta: "+2"
+    - metric: "负例误报"
+      baseline: "2/10 (20%)"
+      optimized: "0/10 (0%)"
+      delta: "-2"
+    - metric: "中文 top-1"
+      baseline: "6/11 (54.5%)"
+      optimized: "8/11 (72.7%)"
+      delta: "+2"
+    - metric: "remedy top-1（含声明 trigger）"
+      baseline: "—"
+      optimized: "21/21 (100%)"
+      delta: "fixture 变更，非同条件对照"
+  deviations:
+    - "remedy 运行增加了 trigger，因此不能与基准合并成一个改善数字。"
+    - "v0.7.0 的两个误报里，television→vision 的分数是 10，意味着它会稳定地排在第一位，不是边缘噪声。"
+    - "样本 21 条正例，不足以估计置信区间；本记录不报告统计显著性。"
+  conclusion: "supported"
+  confidence: "low"
+evidence:
+  raw_data:
+    - "evidence/before-v0.7.0.txt"
+    - "evidence/after-v0.7.1.txt"
+    - "evidence/after-v0.7.1-triggers.txt"
+  logs: []
+  artifact_locations:
+    - "domains/software-engineering/skill-router-calibration/fixtures/"
+    - "domains/software-engineering/skill-router-calibration/tools/run_router_eval.py"
+  evaluator_notes:
+    - "评测由改动者本人在同一上下文执行，不满足 GOVERNANCE §6 的独立性要求，因此 confidence 为 low。"
+    - "fixture 里的 6 个领域 Skill 是评测者构造的；期望标签也是评测者写的，存在自证风险。"
+    - "路由是确定性函数，同一输入重跑输出一致；这不等于路由质量稳定。"
+reproducibility:
+  steps:
+    - "取 fixture v1（本记录所在提交）。"
+    - "在 Adaptive-Agent-Workflow 中用 `git worktree add <dir> 234e1f4` 取出 v0.7.0。"
+    - "在 domains/software-engineering/skill-router-calibration 下依次运行 evaluation.md 里的三条命令。"
+    - "对比输出的 HIT1/HIT2/MISS/FP 与 summary 计数。"
+  known_gaps:
+    - "只有 21 条正例，且 fixture 为自撰，不能外推到开放 Skill 生态。"
+    - "没有验证真实 host 是否按此顺序把候选注入上下文。"
+    - "没有测量挂载后被选中的 Skill 是否真的改善了任务结果。"
+    - "中文依靠 2 字 bigram，未处理分词、同义词与繁简差异。"
+  replay_status: "attempted"
